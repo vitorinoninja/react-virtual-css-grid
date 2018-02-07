@@ -15,6 +15,13 @@ var VirtualCSSGrid = require('react-virtual-css-grid');
 ```
 
 ## Usage
+
+It can be as simple as:
+```javascript
+<VirtualCSSGrid nItems={100} renderGridItem={this.renderGridItem} />
+```
+
+But some default values are recommended as shown in this basic example
 ```javascript
 /* considering you imported as "VirtualCSSGrid" */
 import React from 'react';
