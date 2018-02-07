@@ -1,0 +1,50 @@
+{
+  "name": "react-virtual-css-grid",
+  "version": "0.1.0",
+  "description": "Virtual CSS grid for React",
+  "main": "index.js",
+  "peerDependencies": {
+    "react": "^16.2.0"
+  },
+  "dependencies": {
+    "react": "^16.2.0",
+    "units-css": "^0.4.0",
+    "webpack": "^3.10.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch",
+    "build": "webpack"
+  },
+  "author": "Thiago Vitorino <shuriken@vitorino.ninja>",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.1.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.5.1",
+    "babel-preset-react": "^6.24.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitorinoninja/react-virtual-css-grid.git"
+  },
+  "keywords": [
+    "React",
+    "CSS",
+    "CSSGrid",
+    "List",
+    "Grid",
+    "CSSList",
+    "Virtual",
+    "Fast",
+    "Lightweight"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vitorinoninja/react-virtual-css-grid/issues"
+  },
+  "homepage": "https://github.com/vitorinoninja/react-virtual-css-grid#readme"
+}
