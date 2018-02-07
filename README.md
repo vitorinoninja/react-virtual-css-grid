@@ -1,4 +1,6 @@
-# Extremely fast and lightweight virtual CSSGrid(also used as list) for React
+# react-virtual-css-grid
+
+**Extremely fast and lightweight virtual CSSGrid(also used as list) for React**
 
 This project is currently "super alpha" with basic support and is subject to all kinds of changes. Keep that in mind and the version you are using "hard coded".
 
