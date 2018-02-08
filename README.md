@@ -1,3 +1,4 @@
+
 # react-virtual-css-grid
 
 **Extremely fast and lightweight virtual CSSGrid(also used as list) for React**
@@ -5,6 +6,15 @@
 This project is currently "super alpha" with basic support and is subject to all kinds of changes. Keep that in mind and the version you are using "hard coded".
 
 ## Install
+#### yarn
+```shell
+yarn add react-virtual-css-grid
+```
+#### npm
+```shell
+npm i react-virtual-css-grid
+```
+## Importing on your project
 ES6
 ```javascript
 import VirtualCSSGrid from 'react-virtual-css-grid'
