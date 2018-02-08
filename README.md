@@ -23,7 +23,6 @@ It can be as simple as:
 
 But some default values are recommended as shown in this basic example
 ```javascript
-/* considering you imported as "VirtualCSSGrid" */
 import React from 'react';
 import VirtualCSSGrid from 'react-virtual-css-grid'
 
@@ -44,7 +43,7 @@ class App extends React.Component {
     // 	you might want to use this to get actual data
     //	from a list and print neat components
     //
-    //	considering you provided an given nItems value
+    //	considering you provided a given nItems value
     //	absolutePosition is the item corresponding to certain scroll
     //	columnPosition is the position of that iten's column on the grid
     //	rowPosition is the position of that iten's row on the grid
