@@ -11,21 +11,6 @@ class VirtualCSSGrid extends React.Component {
     // the renderGridItem function is required
     if(!props.nItems) throw new Error("The total ammount of items to render is required (nItems prop)")
 
-    // the cointainer style
-    let style = {
-      overflow: 'auto',
-      // totally arbitrary first height value
-      height:'100px',
-      ...props.style,
-    }
-
-    //  the gridStyle
-    let finalGridStyle = {
-      display: "grid",
-      overflow: "hidden",
-      ...props.gridStyle
-    }
-
     // other defaults and props overrides
     let {
       //  how many items to render
@@ -39,20 +24,38 @@ class VirtualCSSGrid extends React.Component {
       // required renderGridItem function
       // receives: {absolutePosition, columnPosition, rowPosition}
       renderGridItem,
-      //  just removing the gridStyle property as well
-      gridStyle,
+      //  renaming the original gridStyle prop
+      gridStyle:gridStyleFromProps,
+      //  renaming the original style prop
+      style:styleFromProps,
       // remaining known props for the container div
       ...divProps
     } = props
 
+    // the cointainer style
+    let style = {
+      overflow: 'auto',
+      // totally arbitrary first height value
+      height:'100px',
+      ...styleFromProps,
+    }
+
+    //  the gridStyle
+    let gridStyle = {
+      display: "grid",
+      overflow: "hidden",
+      ...gridStyleFromProps
+    }
+
+    // resolving the gap values
     let {
       rowsGap,
       columnsGap
-    } = this.resolveGap(finalGridStyle.gridGap)
+    } = this.resolveGap(gridStyle.gridGap)
 
     this.state = {
       style,
-      finalGridStyle,
+      gridStyle,
       nItems,
       nColumns,
       columnWidth,
@@ -83,7 +86,7 @@ class VirtualCSSGrid extends React.Component {
       // "%" support requires the grid dimensions first
       //  it might be useful to ignore broken css gridGap values
       //  instead of this approach... time will tell
-      //  value ex: grid-gap = "1em     2px"
+      //  value ex: grid-gap = "5px 2px"
       ...gapCSSString.split(/\s+/).reduce((obj, item, index) => {
           // getting current gap (first row, then column, then ignore any extra)
           let gap = units.convert("px", item)
@@ -140,8 +143,8 @@ class VirtualCSSGrid extends React.Component {
     // The Grid Style
     let marginTop           = (rowPosition * this.state.rowHeight + this.state.rowsGap * (rowPosition))
     let gridTemplateColumns = this.state.gridTemplateColumns || `repeat(${nRowsToShow}, ${this.state.rowHeight}px)`
-    let finalGridStyle = {
-        ...this.state.finalGridStyle,
+    let gridStyle = {
+        ...this.state.gridStyle,
         display:"grid",
         height:`${gridHeight-marginTop}px`,
         gridTemplateColumns:`repeat(${this.state.nColumns}, ${this.state.columnWidth})`,
@@ -157,7 +160,7 @@ class VirtualCSSGrid extends React.Component {
       scrollTop,
       nRowsToShow,
       rowPosition,
-      finalGridStyle
+      gridStyle
     })
   }
 
@@ -180,7 +183,7 @@ class VirtualCSSGrid extends React.Component {
         style={this.state.style}
         onScroll={this.handleScroll} >
 
-          <div style={this.state.finalGridStyle}>
+          <div style={this.state.gridStyle}>
               {this.state.content}
           </div>
 

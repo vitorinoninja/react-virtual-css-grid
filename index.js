@@ -253,19 +253,6 @@ var VirtualCSSGrid = function (_React$Component) {
     // the renderGridItem function is required
     if (!props.nItems) throw new Error("The total ammount of items to render is required (nItems prop)");
 
-    // the cointainer style
-    var style = _extends({
-      overflow: 'auto',
-      // totally arbitrary first height value
-      height: '100px'
-    }, props.style);
-
-    //  the gridStyle
-    var finalGridStyle = _extends({
-      display: "grid",
-      overflow: "hidden"
-    }, props.gridStyle);
-
     // other defaults and props overrides
 
     var _props$nItems = props.nItems,
@@ -277,16 +264,34 @@ var VirtualCSSGrid = function (_React$Component) {
         _props$rowHeight = props.rowHeight,
         rowHeight = _props$rowHeight === undefined ? 100 : _props$rowHeight,
         renderGridItem = props.renderGridItem,
-        gridStyle = props.gridStyle,
-        divProps = _objectWithoutProperties(props, ['nItems', 'nColumns', 'columnWidth', 'rowHeight', 'renderGridItem', 'gridStyle']);
+        gridStyleFromProps = props.gridStyle,
+        styleFromProps = props.style,
+        divProps = _objectWithoutProperties(props, ['nItems', 'nColumns', 'columnWidth', 'rowHeight', 'renderGridItem', 'gridStyle', 'style']);
 
-    var _this$resolveGap = _this.resolveGap(finalGridStyle.gridGap),
+    // the cointainer style
+
+
+    var style = _extends({
+      overflow: 'auto',
+      // totally arbitrary first height value
+      height: '100px'
+    }, styleFromProps);
+
+    //  the gridStyle
+    var gridStyle = _extends({
+      display: "grid",
+      overflow: "hidden"
+    }, gridStyleFromProps);
+
+    // resolving the gap values
+
+    var _this$resolveGap = _this.resolveGap(gridStyle.gridGap),
         rowsGap = _this$resolveGap.rowsGap,
         columnsGap = _this$resolveGap.columnsGap;
 
     _this.state = {
       style: style,
-      finalGridStyle: finalGridStyle,
+      gridStyle: gridStyle,
       nItems: nItems,
       nColumns: nColumns,
       columnWidth: columnWidth,
@@ -362,7 +367,7 @@ var VirtualCSSGrid = function (_React$Component) {
           onScroll: this.handleScroll }),
         _react2.default.createElement(
           'div',
-          { style: this.state.finalGridStyle },
+          { style: this.state.gridStyle },
           this.state.content
         )
       );
@@ -412,7 +417,7 @@ var _initialiseProps = function _initialiseProps() {
     // The Grid Style
     var marginTop = rowPosition * _this3.state.rowHeight + _this3.state.rowsGap * rowPosition;
     var gridTemplateColumns = _this3.state.gridTemplateColumns || 'repeat(' + nRowsToShow + ', ' + _this3.state.rowHeight + 'px)';
-    var finalGridStyle = _extends({}, _this3.state.finalGridStyle, {
+    var gridStyle = _extends({}, _this3.state.gridStyle, {
       display: "grid",
       height: gridHeight - marginTop + 'px',
       gridTemplateColumns: 'repeat(' + _this3.state.nColumns + ', ' + _this3.state.columnWidth + ')',
@@ -427,7 +432,7 @@ var _initialiseProps = function _initialiseProps() {
       scrollTop: scrollTop,
       nRowsToShow: nRowsToShow,
       rowPosition: rowPosition,
-      finalGridStyle: finalGridStyle
+      gridStyle: gridStyle
     });
   };
 
