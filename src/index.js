@@ -18,7 +18,7 @@ class VirtualCSSGrid extends React.Component {
       //  how many columns
       nColumns = 5,
       // each column line width (any unit)
-      columnWidth = "1fr",  // not used of gridTemplateColumns is defined
+      columnWidth = "1fr",  // not used if gridTemplateColumns is defined
       // each row line height in pixels
       rowHeight = 100,
       // required renderGridItem function
@@ -106,28 +106,84 @@ class VirtualCSSGrid extends React.Component {
   //  scrollTop is typically the scroll event target scrollTop value
   //  containerHeight is typically the scroll event target offsetHeight value (the actual box height of it)
   calculateContentPosition = (scrollTop, containerHeight) => {
+    //  the real nColumns depends of the grid`s css and dimension
+    let nColumns = 0
+    //  support for the "auto-fill" cssGrid feature considering
+    //  the DOM Engine is filling as much content as it can in one row
+    if(/repeat\(\s*auto\-fill/.test(this.grid.style.gridTemplateColumns)){
+      //  maximum grid width that can be filled per row
+      let maximunWidth = this.grid.offsetWidth
+      //  checking how many gridItems are filling a row
+      //  and using this as basis for our nColumns
+      Array.from(this.grid.children).some(item => {
+        //  if the next gridItem need more space then available, nColumns is defined
+        if( (maximunWidth -= item.offsetWidth) < 0 ) return true
+        //  otherwise we can add more columns
+        nColumns++
+        return false
+      })
+    }else{
+      //  if the content isn't filling the ammount of columns, we might use
+      //  this super fast "hack"s to calculate it before the next render
+      //  we start by getting columns specified outside css functions
+      //  ie: "[linename1] 100px [linename2] repeat(auto-fit, [linename3 linename4] 300px) 100px"
+      //  100px and 100px are 2 columns specified outside css functions
+      let columnsOutsideFunctions =  this.grid.style.gridTemplateColumns
+                                      .replace(/\S*\(.*?\)|\[.*?\]/g, "")
+                                      .trim()
+                                      .split(/\s+/)
+      //  if no auto-fitting is specified, use the columnsOutsideFunctions length
+      nColumns = columnsOutsideFunctions.length
+      //  otherwise, calculate how many auto fitted gridItems there will be
+      if(this.grid.style.gridTemplateColumns.indexOf("auto-fit") !== -1){
+        //  if the ammout of columns is generated using the gridItems size
+        //  check how many are necessary to fill one row and use that
+        //  as base to calculate the rest of the grid
+        //  when auto-fits are present, we can't currently (2018-02-10) use it
+        //  with relative units, like fr or %. It must be absolute like px.
+        //  so let's calculate how much space the columns outside functions use
+        //  to stabilish how much auto-fit room we got remaining
+        //  little neat trick starting the reduce at "rowsGap * -1" allows us to
+        //  add the rowGap for every new auto fitted item, even if its the first column
+        let columnsOutsideFunctionsWidth = columnsOutsideFunctions.reduce( (width, column) => {
+                                                                      return width + units.convert("px", column) + this.state.rowsGap
+                                                                    }, this.state.rowsGap*-1)
+        //  grabbing the auto-fit necessary width per repeat item
+        //  ie: repeat(auto-fit, 100px) = 100px necessary per new item (plus grid gap)
+        let autoFitSize = this.state.rowsGap+units.convert("px", this.grid.style.gridTemplateColumns.match(/\(.*auto-fit.*?(\d+\w+).*\)/)[1])
+        //  finally stabilishing how many auto-fit gridItems we are rendering per column
+        let nAutoFittedColumns = Math.floor((this.grid.offsetWidth - columnsOutsideFunctionsWidth) / autoFitSize)
+        //  nColumns can be finally calculated sums autofitted and regular gridItems
+        nColumns = nAutoFittedColumns + nColumns
+      }
+    }
+
+
+    // if by any means we still got 0 nColumns, use the initial state value
+    nColumns || (nColumns = this.state.nColumns)
+
     //  how many rows are we talking about?
-    let nRows             = Math.ceil(this.state.nItems / this.state.nColumns)
+    let nRows             = Math.ceil(this.state.nItems / nColumns)
     //  calculated height of the grid
     let gridHeight        = nRows * this.state.rowHeight + this.state.rowsGap * (nRows-1)
     //  we might roll just enough to see an extra row
     let nRowsToShow       = Math.ceil(containerHeight / this.state.rowHeight)+1
     //  here we calculate how many items we will render
-    let nItensToRender    = nRowsToShow*this.state.nColumns
+    let nItensToRender    = nRowsToShow*nColumns
     //  the abolute position considering an one dimension list/array
     let position          = Math.floor(this.state.nItems * scrollTop / gridHeight) || 0
     //  we must ajust the position to always fill from the first grid cell
     //  even if the scroll position "points" to an item in the middle of a line
-    let firstItemToShow   = position - (position % this.state.nColumns)
+    let firstItemToShow   = position - (position % nColumns)
     //  getting the rowPosition now that we stabished the absolutePosition
-    let rowPosition       = Math.floor(firstItemToShow / this.state.nColumns)
+    let rowPosition       = Math.floor(firstItemToShow / nColumns)
     //  ;)
     let content = [...Array(nItensToRender).keys()]
                   .map(i => i+firstItemToShow)
                   .filter(i => i < this.state.nItems)
                   .map((absolutePosition, counter) => {
-                    let columnPosition  = absolutePosition % this.state.nColumns
-                    let rowPosition     = Math.floor(counter / this.state.nColumns)
+                    let columnPosition  = absolutePosition % nColumns
+                    let rowPosition     = Math.floor(counter / nColumns)
                     let gridItem        = this.state.renderGridItem({absolutePosition, columnPosition, rowPosition})
                     let styledGridItem  = {
                       ...gridItem,
@@ -142,12 +198,12 @@ class VirtualCSSGrid extends React.Component {
 
     // The Grid Style
     let marginTop           = (rowPosition * this.state.rowHeight + this.state.rowsGap * (rowPosition))
-    let gridTemplateColumns = this.state.gridTemplateColumns || `repeat(${nRowsToShow}, ${this.state.rowHeight}px)`
+    let gridTemplateColumns = this.state.gridStyle.gridTemplateColumns || `repeat(${nColumns}, ${this.state.columnWidth})`
     let gridStyle = {
         ...this.state.gridStyle,
         display:"grid",
         height:`${gridHeight-marginTop}px`,
-        gridTemplateColumns:`repeat(${this.state.nColumns}, ${this.state.columnWidth})`,
+        gridTemplateColumns,
         gridTemplateRows:`repeat(${nRowsToShow}, ${this.state.rowHeight}px)`,
         overflow:"hidden",
         //gridGap:"10px",
@@ -160,7 +216,8 @@ class VirtualCSSGrid extends React.Component {
       scrollTop,
       nRowsToShow,
       rowPosition,
-      gridStyle
+      gridStyle,
+      nColumns
     })
   }
 
@@ -183,8 +240,10 @@ class VirtualCSSGrid extends React.Component {
         style={this.state.style}
         onScroll={this.handleScroll} >
 
-          <div style={this.state.gridStyle}>
-              {this.state.content}
+          <div
+            ref={grid => this.grid = grid}
+            style={this.state.gridStyle} >
+            {this.state.content}
           </div>
 
       </div>

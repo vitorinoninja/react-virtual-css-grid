@@ -367,7 +367,11 @@ var VirtualCSSGrid = function (_React$Component) {
           onScroll: this.handleScroll }),
         _react2.default.createElement(
           'div',
-          { style: this.state.gridStyle },
+          {
+            ref: function ref(grid) {
+              return _this2.grid = grid;
+            },
+            style: this.state.gridStyle },
           this.state.content
         )
       );
@@ -381,29 +385,81 @@ var _initialiseProps = function _initialiseProps() {
   var _this3 = this;
 
   this.calculateContentPosition = function (scrollTop, containerHeight) {
+    //  the real nColumns depends of the grid`s css and dimension
+    var nColumns = 0;
+    //  support for the "auto-fill" cssGrid feature considering
+    //  the DOM Engine is filling as much content as it can in one row
+    if (/repeat\(\s*auto\-fill/.test(_this3.grid.style.gridTemplateColumns)) {
+      //  maximum grid width that can be filled per row
+      var maximunWidth = _this3.grid.offsetWidth;
+      //  checking how many gridItems are filling a row
+      //  and using this as basis for our nColumns
+      Array.from(_this3.grid.children).some(function (item) {
+        //  if the next gridItem need more space then available, nColumns is defined
+        if ((maximunWidth -= item.offsetWidth) < 0) return true;
+        //  otherwise we can add more columns
+        nColumns++;
+        return false;
+      });
+    } else {
+      //  if the content isn't filling the ammount of columns, we might use
+      //  this super fast "hack"s to calculate it before the next render
+      //  we start by getting columns specified outside css functions
+      //  ie: "[linename1] 100px [linename2] repeat(auto-fit, [linename3 linename4] 300px) 100px"
+      //  100px and 100px are 2 columns specified outside css functions
+      var columnsOutsideFunctions = _this3.grid.style.gridTemplateColumns.replace(/\S*\(.*?\)|\[.*?\]/g, "").trim().split(/\s+/);
+      //  if no auto-fitting is specified, use the columnsOutsideFunctions length
+      nColumns = columnsOutsideFunctions.length;
+      //  otherwise, calculate how many auto fitted gridItems there will be
+      if (_this3.grid.style.gridTemplateColumns.indexOf("auto-fit") !== -1) {
+        //  if the ammout of columns is generated using the gridItems size
+        //  check how many are necessary to fill one row and use that
+        //  as base to calculate the rest of the grid
+        //  when auto-fits are present, we can't currently (2018-02-10) use it
+        //  with relative units, like fr or %. It must be absolute like px.
+        //  so let's calculate how much space the columns outside functions use
+        //  to stabilish how much auto-fit room we got remaining
+        //  little neat trick starting the reduce at "rowsGap * -1" allows us to
+        //  add the rowGap for every new auto fitted item, even if its the first column
+        var columnsOutsideFunctionsWidth = columnsOutsideFunctions.reduce(function (width, column) {
+          return width + _unitsCss2.default.convert("px", column) + _this3.state.rowsGap;
+        }, _this3.state.rowsGap * -1);
+        //  grabbing the auto-fit necessary width per repeat item
+        //  ie: repeat(auto-fit, 100px) = 100px necessary per new item (plus grid gap)
+        var autoFitSize = _this3.state.rowsGap + _unitsCss2.default.convert("px", _this3.grid.style.gridTemplateColumns.match(/\(.*auto-fit.*?(\d+\w+).*\)/)[1]);
+        //  finally stabilishing how many auto-fit gridItems we are rendering per column
+        var nAutoFittedColumns = Math.floor((_this3.grid.offsetWidth - columnsOutsideFunctionsWidth) / autoFitSize);
+        //  nColumns can be finally calculated sums autofitted and regular gridItems
+        nColumns = nAutoFittedColumns + nColumns;
+      }
+    }
+
+    // if by any means we still got 0 nColumns, use the initial state value
+    nColumns || (nColumns = _this3.state.nColumns);
+
     //  how many rows are we talking about?
-    var nRows = Math.ceil(_this3.state.nItems / _this3.state.nColumns);
+    var nRows = Math.ceil(_this3.state.nItems / nColumns);
     //  calculated height of the grid
     var gridHeight = nRows * _this3.state.rowHeight + _this3.state.rowsGap * (nRows - 1);
     //  we might roll just enough to see an extra row
     var nRowsToShow = Math.ceil(containerHeight / _this3.state.rowHeight) + 1;
     //  here we calculate how many items we will render
-    var nItensToRender = nRowsToShow * _this3.state.nColumns;
+    var nItensToRender = nRowsToShow * nColumns;
     //  the abolute position considering an one dimension list/array
     var position = Math.floor(_this3.state.nItems * scrollTop / gridHeight) || 0;
     //  we must ajust the position to always fill from the first grid cell
     //  even if the scroll position "points" to an item in the middle of a line
-    var firstItemToShow = position - position % _this3.state.nColumns;
+    var firstItemToShow = position - position % nColumns;
     //  getting the rowPosition now that we stabished the absolutePosition
-    var rowPosition = Math.floor(firstItemToShow / _this3.state.nColumns);
+    var rowPosition = Math.floor(firstItemToShow / nColumns);
     //  ;)
     var content = [].concat(_toConsumableArray(Array(nItensToRender).keys())).map(function (i) {
       return i + firstItemToShow;
     }).filter(function (i) {
       return i < _this3.state.nItems;
     }).map(function (absolutePosition, counter) {
-      var columnPosition = absolutePosition % _this3.state.nColumns;
-      var rowPosition = Math.floor(counter / _this3.state.nColumns);
+      var columnPosition = absolutePosition % nColumns;
+      var rowPosition = Math.floor(counter / nColumns);
       var gridItem = _this3.state.renderGridItem({ absolutePosition: absolutePosition, columnPosition: columnPosition, rowPosition: rowPosition });
       var styledGridItem = _extends({}, gridItem, {
         style: _extends({}, gridItem.style, {
@@ -416,11 +472,11 @@ var _initialiseProps = function _initialiseProps() {
 
     // The Grid Style
     var marginTop = rowPosition * _this3.state.rowHeight + _this3.state.rowsGap * rowPosition;
-    var gridTemplateColumns = _this3.state.gridTemplateColumns || 'repeat(' + nRowsToShow + ', ' + _this3.state.rowHeight + 'px)';
+    var gridTemplateColumns = _this3.state.gridStyle.gridTemplateColumns || 'repeat(' + nColumns + ', ' + _this3.state.columnWidth + ')';
     var gridStyle = _extends({}, _this3.state.gridStyle, {
       display: "grid",
       height: gridHeight - marginTop + 'px',
-      gridTemplateColumns: 'repeat(' + _this3.state.nColumns + ', ' + _this3.state.columnWidth + ')',
+      gridTemplateColumns: gridTemplateColumns,
       gridTemplateRows: 'repeat(' + nRowsToShow + ', ' + _this3.state.rowHeight + 'px)',
       overflow: "hidden",
       //gridGap:"10px",
@@ -432,7 +488,8 @@ var _initialiseProps = function _initialiseProps() {
       scrollTop: scrollTop,
       nRowsToShow: nRowsToShow,
       rowPosition: rowPosition,
-      gridStyle: gridStyle
+      gridStyle: gridStyle,
+      nColumns: nColumns
     });
   };
 
