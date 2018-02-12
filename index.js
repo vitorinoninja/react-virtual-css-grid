@@ -318,6 +318,7 @@ var VirtualCSSGrid = function (_React$Component) {
         rowsGap: 0,
         columnsGap: 0
       };
+
       if (!gapCSSString) return defaultGaps;
       // converting abitrary gap values to pixels
       return _extends({}, defaultGaps, gapCSSString.split(/\s+/).reduce(function (obj, item, index) {
@@ -347,7 +348,7 @@ var VirtualCSSGrid = function (_React$Component) {
 
     // renders the first time as soon as we can calculate the dimensions
     value: function componentDidMount() {
-      this.calculateContentPosition(0, this.container.offsetHeight);
+      this.calculateContentPosition(0, this.container.scrollHeight, this.container.offsetHeight);
     }
 
     // the actual react component render method
@@ -384,7 +385,7 @@ var VirtualCSSGrid = function (_React$Component) {
 var _initialiseProps = function _initialiseProps() {
   var _this3 = this;
 
-  this.calculateContentPosition = function (scrollTop, containerHeight) {
+  this.calculateContentPosition = function (scrollTop, containerScrollHeight, containerHeight) {
     //  the real nColumns depends of the grid`s css and dimension
     var nColumns = 0;
     //  support for the "auto-fill" cssGrid feature considering
@@ -446,21 +447,24 @@ var _initialiseProps = function _initialiseProps() {
     //  here we calculate how many items we will render
     var nItensToRender = nRowsToShow * nColumns;
     //  the abolute position considering an one dimension list/array
-    var position = Math.floor(_this3.state.nItems * scrollTop / gridHeight) || 0;
+    var nItemsPosition = Math.floor(_this3.state.nItems * scrollTop / gridHeight) || 0;
     //  we must ajust the position to always fill from the first grid cell
     //  even if the scroll position "points" to an item in the middle of a line
-    var firstItemToShow = position - position % nColumns;
+    var firstItemToShow = nItemsPosition - nItemsPosition % nColumns;
     //  getting the rowPosition now that we stabished the absolutePosition
     var rowPosition = Math.floor(firstItemToShow / nColumns);
+    //  defining our current scrollRatio
+    var scrollRatio = scrollTop / (containerScrollHeight - containerHeight);
+
     //  ;)
     var content = [].concat(_toConsumableArray(Array(nItensToRender).keys())).map(function (i) {
       return i + firstItemToShow;
     }).filter(function (i) {
       return i < _this3.state.nItems;
-    }).map(function (absolutePosition, counter) {
-      var columnPosition = absolutePosition % nColumns;
+    }).map(function (position, counter) {
+      var columnPosition = position % nColumns;
       var rowPosition = Math.floor(counter / nColumns);
-      var gridItem = _this3.state.renderGridItem({ absolutePosition: absolutePosition, columnPosition: columnPosition, rowPosition: rowPosition });
+      var gridItem = _this3.state.renderGridItem({ position: position, columnPosition: columnPosition, rowPosition: rowPosition, scrollRatio: scrollRatio });
       var styledGridItem = _extends({}, gridItem, {
         style: _extends({}, gridItem.style, {
           gridRowStart: rowPosition + 1,
@@ -496,9 +500,10 @@ var _initialiseProps = function _initialiseProps() {
   this.handleScroll = function (_ref) {
     var _ref$target = _ref.target,
         scrollTop = _ref$target.scrollTop,
+        scrollHeight = _ref$target.scrollHeight,
         offsetHeight = _ref$target.offsetHeight;
 
-    _this3.calculateContentPosition(scrollTop, offsetHeight);
+    _this3.calculateContentPosition(scrollTop, scrollHeight, offsetHeight);
   };
 };
 

@@ -77,6 +77,7 @@ class VirtualCSSGrid extends React.Component {
       rowsGap:0,
       columnsGap:0
     }
+
     if(!gapCSSString) return defaultGaps
     // converting abitrary gap values to pixels
     return {
@@ -105,7 +106,7 @@ class VirtualCSSGrid extends React.Component {
   //  just the necessary items
   //  scrollTop is typically the scroll event target scrollTop value
   //  containerHeight is typically the scroll event target offsetHeight value (the actual box height of it)
-  calculateContentPosition = (scrollTop, containerHeight) => {
+  calculateContentPosition = (scrollTop, containerScrollHeight, containerHeight) => {
     //  the real nColumns depends of the grid`s css and dimension
     let nColumns = 0
     //  support for the "auto-fill" cssGrid feature considering
@@ -171,20 +172,23 @@ class VirtualCSSGrid extends React.Component {
     //  here we calculate how many items we will render
     let nItensToRender    = nRowsToShow*nColumns
     //  the abolute position considering an one dimension list/array
-    let position          = Math.floor(this.state.nItems * scrollTop / gridHeight) || 0
+    let nItemsPosition    = Math.floor(this.state.nItems * scrollTop / gridHeight) || 0
     //  we must ajust the position to always fill from the first grid cell
     //  even if the scroll position "points" to an item in the middle of a line
-    let firstItemToShow   = position - (position % nColumns)
+    let firstItemToShow   = nItemsPosition - (nItemsPosition % nColumns)
     //  getting the rowPosition now that we stabished the absolutePosition
     let rowPosition       = Math.floor(firstItemToShow / nColumns)
+    //  defining our current scrollRatio
+    let scrollRatio       =  scrollTop / ( containerScrollHeight - containerHeight )
+    
     //  ;)
     let content = [...Array(nItensToRender).keys()]
                   .map(i => i+firstItemToShow)
                   .filter(i => i < this.state.nItems)
-                  .map((absolutePosition, counter) => {
-                    let columnPosition  = absolutePosition % nColumns
+                  .map((position, counter) => {
+                    let columnPosition  = position % nColumns
                     let rowPosition     = Math.floor(counter / nColumns)
-                    let gridItem        = this.state.renderGridItem({absolutePosition, columnPosition, rowPosition})
+                    let gridItem        = this.state.renderGridItem({position, columnPosition, rowPosition, scrollRatio})
                     let styledGridItem  = {
                       ...gridItem,
                       style:{
@@ -222,13 +226,13 @@ class VirtualCSSGrid extends React.Component {
   }
 
   // handles the React onScroll event
-  handleScroll = ({target:{scrollTop, offsetHeight}}) => {
-    this.calculateContentPosition(scrollTop, offsetHeight)
+  handleScroll = ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
+    this.calculateContentPosition(scrollTop, scrollHeight, offsetHeight)
   }
 
   // renders the first time as soon as we can calculate the dimensions
   componentDidMount(){
-    this.calculateContentPosition(0, this.container.offsetHeight)
+    this.calculateContentPosition(0, this.container.scrollHeight, this.container.offsetHeight)
   }
 
   // the actual react component render method

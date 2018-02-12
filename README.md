@@ -54,10 +54,11 @@ class App extends React.Component {
     //	from a list and print neat components
     //
     //	considering you provided a given nItems value
-    //	absolutePosition is the item corresponding to certain scroll
+    //	position is the item corresponding to certain scroll
     //	columnPosition is the position of that iten's column on the grid
     //	rowPosition is the position of that iten's row on the grid
-    renderGridItem({absolutePosition, columnPosition, rowPosition}){
+    //  scrollRatio is the current scroll position from 0 to 1
+    renderGridItem({position, columnPosition, rowPosition, scrollRatio}){
       //  defining some styles for the grid item
       //  only gridRowStart and gridColumnStart will be overwritten
       let style = {
@@ -69,8 +70,8 @@ class App extends React.Component {
       }
       //	returning one div as gridItem
       return (
-        <div style={style} key={absolutePosition}>
-          {absolutePosition}
+        <div style={style} key={position}>
+          {position}
         </div>
       )
     }
