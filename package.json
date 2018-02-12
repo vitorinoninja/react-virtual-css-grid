@@ -1,6 +1,6 @@
 {
   "name": "react-virtual-css-grid",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Virtual CSS grid for React",
   "main": "index.js",
   "peerDependencies": {
