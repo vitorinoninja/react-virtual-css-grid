@@ -3,7 +3,7 @@
 
 **Extremely fast and lightweight virtual CSSGrid(also used as list) for React**
 
-This project is currently "super alpha" with basic support and is subject to all kinds of changes. Keep that in mind and the version you are using "hard coded".
+This project is currently alpha, but already has support for most CSSGrid vertical possibilities. I intend to keep it simple to use and extremely performant.
 
 ## Install
 #### yarn
@@ -47,6 +47,17 @@ class App extends React.Component {
       }
     }
 
+    //  The Grid is generated inside the container, we can setup some CSSGrid style
+    //  feel free to play with these and tell me what happened!
+    getGridStyle(){
+      return  {
+        gridGap:"5px 0px",
+        padding:"10px",
+        justifyContent:"space-evenly",
+        gridTemplateColumns:"20% repeat(auto-fill, 200px) 20%",
+      }
+    }
+
     // 	sample grid item renderer
     //
     // 	this will just get the item position and put inside a div
@@ -54,10 +65,10 @@ class App extends React.Component {
     //	from a list and print neat components
     //
     //	considering you provided a given nItems value
-    //	position is the item corresponding to certain scroll
+    //	position is the item "index" corresponding to a certain scroll
     //	columnPosition is the position of that iten's column on the grid
     //	rowPosition is the position of that iten's row on the grid
-    //  scrollRatio is the current scroll position from 0 to 1
+    //  scrollRatio is the current scroll ratio from 0 to 1
     renderGridItem({position, columnPosition, rowPosition, scrollRatio}){
       //  defining some styles for the grid item
       //  only gridRowStart and gridColumnStart will be overwritten
@@ -91,10 +102,7 @@ class App extends React.Component {
           style={this.getCointainerStyle()}
           //  the grid style (goes as a div and child of the container)
           //  also recommended
-          gridStyle={{gridGap:"10px 5px"}}
-          //  how many columns we want on our grid
-          //  recommended (nColumns={1} makes the grid a list)
-          nColumns={5}
+          gridStyle={this.getGridStyle()}
         />
       </div>
     );
@@ -108,6 +116,7 @@ export default App;
 You can try to use this as your "App" component for your create-react-app starter kit to check the results and tweak parameters.
 
 #### to-dos
-+ add support for grid padding
-+ investigate how much we can infer from both grid and cointainer css
++ documment the usage options here
++ investigate even further how much we can infer from both grid and container css
++ offer an optional resizer decorator to update on element resize
 + setup some demos
