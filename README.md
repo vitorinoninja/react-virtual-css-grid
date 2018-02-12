@@ -106,3 +106,8 @@ export default App;
 ```
 
 You can try to use this as your "App" component for your create-react-app starter kit to check the results and tweak parameters.
+
+#### to-dos
++ add support for grid padding
++ investigate how much we can infer from both grid and cointainer css
++ setup some demos
