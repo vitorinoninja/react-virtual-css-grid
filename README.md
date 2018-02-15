@@ -115,8 +115,68 @@ export default App;
 
 You can try to use this as your "App" component for your create-react-app starter kit to check the results and tweak parameters.
 
+
+## Resize support
+
+CSSGrid is more fun when you can take advantage of the flexibility it provides when it comes to changing the grid dimensions. Making it thinner might decrease the number of columns or making it wider might create room for more of them. If you want to use CSSGrid properties that change dynamically the number of rows and columns, The ResizableVirtualCSSGrid is for you.
+```javascript
+import React from 'react';
+import { ResizableVirtualCssGrid } from 'react-virtual-css-grid'
+
+class App extends React.Component {
+
+    getCointainerStyle(){
+      return {
+        height:"100vh",
+        textAlign:"center"
+      }
+    }
+
+    renderGridItem({position, columnPosition, rowPosition}){
+      let style = {
+        alignSelf:"center",
+        background:`#d0d0d0`,
+        height:"100%",
+        alignContent:"center",
+        display:"grid"
+      }
+      return (
+        <div style={style} key={position}>
+          {position}
+        </div>
+      )
+    }
+
+    getGridStyle() {
+      return {
+        gridGap:"10px 5px",
+        gridTemplateColumns:"10% repeat(auto-fit, 150px) 10%"
+      }
+    }
+
+  render() {
+    return (
+      <div>
+        <ResizableVirtualCssGrid
+          renderGridItem={this.renderGridItem}
+          nItems={1000}
+          style={this.getCointainerStyle()}
+          gridStyle={this.getGridStyle()}
+        />
+      </div>
+    );
+  }
+}
+
+export default App;
+
+```
+
+It trades off some performance to keep track of the resize and trigger render gridItems when it happens, but it is necessary as we are showing only the necessary number of items to fill the current visible grid area (which might give back to you A LOT more performance).
+
+
 #### to-dos
 + documment the usage options here
 + investigate even further how much we can infer from both grid and container css
-+ offer an optional resizer decorator to update on element resize
++ find out if caching or render prevention techniques improve resize performance
 + setup some demos
