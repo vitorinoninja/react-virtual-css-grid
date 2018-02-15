@@ -41,9 +41,12 @@ class VirtualCSSGrid extends React.Component {
     }
 
     //  the gridStyle
+    //  notice the gridTemplateColumns can be defined using nColumns + columnWidth
+    //  but will be overrided by gridTemplateColumns if defined
     let gridStyle = {
       display: "grid",
       overflow: "hidden",
+      gridTemplateColumns:`repeat(${nColumns}, ${columnWidth})`,
       ...gridStyleFromProps
     }
 
@@ -107,6 +110,10 @@ class VirtualCSSGrid extends React.Component {
   //  scrollTop is typically the scroll event target scrollTop value
   //  containerHeight is typically the scroll event target offsetHeight value (the actual box height of it)
   calculateContentPosition = (scrollTop, containerScrollHeight, containerHeight) => {
+
+    //  POSSIBLE ENHANCEMENT HERE: only trigger a new render
+    //  if last render can be broken by the new values
+
     //  the real nColumns depends of the grid`s css and dimension
     let nColumns = 0
     //  support for the "auto-fill" cssGrid feature considering
@@ -147,18 +154,17 @@ class VirtualCSSGrid extends React.Component {
         //  little neat trick starting the reduce at "rowsGap * -1" allows us to
         //  add the rowGap for every new auto fitted item, even if its the first column
         let columnsOutsideFunctionsWidth = columnsOutsideFunctions.reduce( (width, column) => {
-                                                                      return width + units.convert("px", column) + this.state.rowsGap
-                                                                    }, this.state.rowsGap*-1)
+                                                                      return width + units.convert("px", column, this.grid, "offsetWidth") + this.state.columnsGap
+                                                                    }, this.state.columnsGap*-1)
         //  grabbing the auto-fit necessary width per repeat item
         //  ie: repeat(auto-fit, 100px) = 100px necessary per new item (plus grid gap)
-        let autoFitSize = this.state.rowsGap+units.convert("px", this.grid.style.gridTemplateColumns.match(/\(.*auto-fit.*?(\d+\w+).*\)/)[1])
+        let autoFitSize = this.state.columnsGap+units.convert("px", this.grid.style.gridTemplateColumns.match(/\(.*auto-fit.*?(\d+\w+).*\)/)[1], this.grid, "offsetWidth")
         //  finally stabilishing how many auto-fit gridItems we are rendering per column
         let nAutoFittedColumns = Math.floor((this.grid.offsetWidth - columnsOutsideFunctionsWidth) / autoFitSize)
         //  nColumns can be finally calculated sums autofitted and regular gridItems
         nColumns = nAutoFittedColumns + nColumns
       }
     }
-
 
     // if by any means we still got 0 nColumns, use the initial state value
     nColumns || (nColumns = this.state.nColumns)
@@ -202,15 +208,12 @@ class VirtualCSSGrid extends React.Component {
 
     // The Grid Style
     let marginTop           = (rowPosition * this.state.rowHeight + this.state.rowsGap * (rowPosition))
-    let gridTemplateColumns = this.state.gridStyle.gridTemplateColumns || `repeat(${nColumns}, ${this.state.columnWidth})`
     let gridStyle = {
         ...this.state.gridStyle,
         display:"grid",
         height:`${gridHeight-marginTop}px`,
-        gridTemplateColumns,
         gridTemplateRows:`repeat(${nRowsToShow}, ${this.state.rowHeight}px)`,
         overflow:"hidden",
-        //gridGap:"10px",
         marginTop
     }
 
@@ -221,12 +224,15 @@ class VirtualCSSGrid extends React.Component {
       nRowsToShow,
       rowPosition,
       gridStyle,
-      nColumns
+      nColumns,
+      scrollRatio
     })
   }
 
-  // handles the React onScroll event
-  handleScroll = ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
+  // handles the React onScroll container event
+  handleScroll = (e) => {
+    if(e.target != this.container) return
+    let {target:{scrollTop, scrollHeight, offsetHeight}} = e
     this.calculateContentPosition(scrollTop, scrollHeight, offsetHeight)
   }
 

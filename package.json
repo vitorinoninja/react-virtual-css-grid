@@ -9,7 +9,7 @@
   "dependencies": {
     "element-resize-detector": "^1.1.13",
     "react": "^16.2.0",
-    "units-css": "^0.4.0",
+    "units-css": "git+https://github.com/vitorinoninja/units.git",
     "webpack": "^3.10.0"
   },
   "scripts": {
