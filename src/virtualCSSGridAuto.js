@@ -105,7 +105,7 @@ class VirtualCSSGrid extends React.Component {
       }
   }
 
-  renderNext = (position = 0, virtualContent = [], addedWidth = 0, averageRowHeight = 0) => {
+  renderNext = (position = 0, virtualContent = [], averageRowHeight = 0) => {
 
     //  we will keep adding items until we have the first row filled
     //  the calculated CSS will allow us to predict the rest of the visible grid
@@ -123,37 +123,33 @@ class VirtualCSSGrid extends React.Component {
       //  content so far
       content:virtualContent,
       //  nColumns so far
-      nColumns:position - this.state.firstItemToShow
+      nColumns:this.grid.children.length
     }, () => {
       //  uppon rendering the last inserted item,
       //  calculate if we filled the first row properly
-      this.forceUpdate(() => {
+      this.forceUpdate( () => {
 
         //  how many items currently on the grid
         let gridNChildren = this.grid.children.length
+        let lastChild     = this.grid.children[gridNChildren-1]
 
-        //  once we added at least one, get the width of the last item added
-        if(gridNChildren > 0){
-          let lastChild = this.grid.children[gridNChildren-1]
-          //  adding to the total width of all children so far
-          addedWidth += lastChild.offsetWidth+this.state.columnsGap
-          //  averaging the how height to predict how many we may have
-          averageRowHeight = gridNChildren > 1 ? (averageRowHeight + lastChild.offsetHeight) / 2 : lastChild.offsetHeight
-        }
-        //  until we filled a rows visible space, add anote gridItem
-        if(addedWidth < this.container.offsetWidth ){
-          this.renderNext(position+1, virtualContent, addedWidth, averageRowHeight)
+        //  adding to the total width of all children so far
+        //  averaging the how height to predict how many we may have
+        averageRowHeight  = gridNChildren > 1 ? (averageRowHeight + lastChild.offsetHeight) / 2 : lastChild.offsetHeight
+        //  check if padding is also necessary
+        let firstRowOffSetTop = this.state.gridStyle.marginTop || 0
+        //  until we fill the fisrt row, keep adding gridItems
+        //  PS: looks like this is not as consistent as expected...
+        if(lastChild.offsetTop === firstRowOffSetTop ){
+          this.renderNext(position+1, virtualContent, averageRowHeight)
         }else {
-          //  once the first row is filled, calculate how many items
-          //  will take to fill the grid and populate before the next render
-          //  number of columns to fill the first row
+          //  Ensuring the nColumns (giving a little extra time to render)
           let nColumns = gridNChildren-1
           //  estimated number of rows to fill a column (minus the first)
-          let nRows = Math.floor(this.container.offsetHeight / (averageRowHeight+this.state.rowsGap)) -1
-
+          let nRowsToShow = Math.ceil(this.container.offsetHeight / (averageRowHeight+this.state.rowsGap))
           //  calling the actual method that populates the rest of the grid
           //  nColumns will be decreased by 1, since we needed one extra item to get the row break
-          this.renderRemainingSpace(position+1, virtualContent, nColumns, nRows, averageRowHeight)
+          this.renderRemainingSpace(position+1, virtualContent, nColumns, nRowsToShow, averageRowHeight)
         }
       })
     })
@@ -167,20 +163,24 @@ class VirtualCSSGrid extends React.Component {
   //  averageRowHeight is the calculated height of the first row
   renderRemainingSpace = (position, virtualContent, nColumns, nRowsToShow, averageRowHeight) =>
   {
+
     //  how many items we will render
-    let nItems          = nColumns * nRowsToShow
-    let current         = 1
-    let { scrollRatio } = this.state
+    let nRemainingItems   = nColumns * nRowsToShow
+    let current           = 1
+    let { scrollRatio }   = this.state
+
+    //  how many prerendered rows we got before this method
+    let nPrerenderedRows  = Math.floor(virtualContent.length / nColumns)
 
     //  calculating the grid style required numbers
-    let nRows           = Math.ceil(this.state.nItems / nColumns)
-    let gridHeight      = nRows * averageRowHeight + this.state.rowsGap * (nRows-1)
-    let rowPosition     = Math.floor(position / nColumns)-1
-    let marginTop       = (rowPosition * averageRowHeight + this.state.rowsGap * (rowPosition))
+    let nRows             = Math.ceil(this.state.nItems / nColumns)
+    let gridHeight        = nRows * averageRowHeight + this.state.rowsGap * (nRows-1)
+    let rowPosition       = Math.floor(position / nColumns)-nPrerenderedRows
+    let marginTop         = rowPosition * averageRowHeight + this.state.rowsGap * rowPosition
 
-    while(current < nItems){
+    while(current <= nRemainingItems && position < this.state.nItems){
       let columnPosition  = current % nColumns
-      let rowPosition     = Math.floor(current / nColumns) + 1
+      let rowPosition     = Math.floor(current / nColumns)+1
       virtualContent.push(this.state.renderGridItem({
         position,
         columnPosition,
@@ -201,9 +201,30 @@ class VirtualCSSGrid extends React.Component {
 
     this.setState({
       content:virtualContent,
-      gridStyle
+      gridStyle,
+      nColumns,
+      averageRowHeight
     })
+
   }
+
+
+  //  calculates the offsetTop of the first gridItem then
+  //  verifies how many subsequent gridItems have the same value
+  //  thefore, they are on the same row and we have our nColumns
+  nColumnsFromRenderedItems = () =>{
+    let firstOffsetTop  = this.grid.children[0].offsetTop
+    let nColumns = 0
+    Array.from(this.grid.children).some(child => {
+                  if(child.offsetTop === firstOffsetTop){
+                    nColumns++
+                    return false
+                  }
+                  return true
+                })
+    return nColumns
+  }
+
 
   //  receives the scrollTop and offsetHeight
   //  and provides the numbers we need to render
@@ -212,35 +233,66 @@ class VirtualCSSGrid extends React.Component {
   //  containerHeight is typically the scroll event target offsetHeight value (the actual box height of it)
   calculateContentPosition = (scrollTop, containerScrollHeight, containerHeight) => {
 
-    //  ;)
-    let content = []
-    // The Grid Style
-    let gridStyle = {
-        ...this.state.gridStyle,
-        display:"grid",
-        overflow:"hidden",
-    }
-
     //  defining our current scrollRatio
     let scrollRatio       =  scrollTop / ( containerScrollHeight - containerHeight )
     //  the position of the gridItem to render considering an one dimension list/array
     let position          = Math.floor(this.state.nItems * scrollTop / containerScrollHeight) || 0
     //  considering the number of columns, gets the position of the first item to show relative to the scroll
     let firstItemToShow   = position - (position % this.state.nColumns)
-    console.log(firstItemToShow, this.state.nColumns)
-    //  reseting nColumns to be recalculated
-    let nColumns          = 1
+
+    //  initial nColumns state
+    let { nColumns }      = this.state
+
+    //  the new content
+    let content           = []
+
+    //  at this point there are twp possible jobs to perform:
+    //  render the first row to calculate the nColumns and averageRowHeight
+    //  or check if any changed state does not require to calculate that again
+    //  and proceed to fill the grid using the last calculated values
+    //  first check if we have previosly calculated nColumns and averageRowHeight
+    if(this.state.averageRowHeight){
+        //  since we already know the nColumns and averageRowHeight
+        //  just fill the available space as quickly as possible
+        let nRowsToShow = 1+Math.ceil((containerHeight-this.state.averageRowHeight) / (this.state.averageRowHeight+this.state.rowsGap))
+        this.renderRemainingSpace(firstItemToShow, [], nColumns, nRowsToShow, this.state.averageRowHeight)
+        return
+        //  if the grid averaging
+        //  check how many items we have on the first column
+        //  let firstOffsetTop  = this.grid.children[0].style.offsetTop
+        //  nColumns            = Array.from(this.grid.children)
+        //                         .some(child => child.style.offsetTop !== firstOffsetTop)
+        //                         .length()
+    }
+
     // sets the state (and that calls the render function again)
     this.setState({
       content,
-      gridStyle,
       scrollTop,
       position,
       firstItemToShow,
       nColumns
     })
 
+    //  go render the first item of the first row
     this.renderNext(firstItemToShow)
+
+
+    //  Since reading the offsetTop property wans't as consistent as we need
+    //  (an item on the second row might have offsetTop != firstRowOffSetTop)
+    //  we might need to recalculate just to be sure the nColumns captured
+    //  matches the value rendered after the css is finally parsed
+    //  here im giving 1 milissend just after everything is ready just to be sure
+    setTimeout(() =>{
+      let nColumnsCheck = this.nColumnsFromRenderedItems()
+      if(nColumnsCheck != this.state.nColumns){
+        this.setState({
+          nColumns:nColumnsCheck
+        }, () => {
+          this.calculateContentPosition(scrollTop, containerScrollHeight, containerHeight)
+        })
+      }
+    },1)
 
   }
 

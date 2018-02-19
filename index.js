@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -72,6 +72,18 @@ module.exports = require("react");
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* eslint-env browser, node */
+
+
+
+module.exports = __webpack_require__(7);
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -133,6 +145,8 @@ utilities.getCreatedElementHeight = function(parent, properties, content) {
 };
 
 var selfReferenceTriggers = [
+  'offsetWidth',
+  'offsetHeight',
   'perspective',
   'translate',
   'translate3d',
@@ -143,6 +157,7 @@ var selfReferenceTriggers = [
 ];
 
 var layoutYTriggers = [
+  'offsetHeight',
   'height',
   'top',
   'translateY'
@@ -210,7 +225,7 @@ module.exports = utilities;
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -236,7 +251,7 @@ utils.forEach = function(collection, callback) {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -282,7 +297,7 @@ detector.isLegacyOpera = function() {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -293,22 +308,22 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ResizableVirtualCssGrid = undefined;
 
-var _virtualCSSGrid = __webpack_require__(5);
+var _virtualCSSGrid = __webpack_require__(6);
 
 var _virtualCSSGrid2 = _interopRequireDefault(_virtualCSSGrid);
 
-var _virtualCSSGridAuto = __webpack_require__(26);
+var _virtualCSSGridAuto = __webpack_require__(14);
 
 var _virtualCSSGridAuto2 = _interopRequireDefault(_virtualCSSGridAuto);
 
-var _resizable = __webpack_require__(14);
+var _resizable = __webpack_require__(15);
 
 var _resizable2 = _interopRequireDefault(_resizable);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //   the actual exports
-var ResizableVirtualCssGrid = exports.ResizableVirtualCssGrid = (0, _resizable2.default)(_virtualCSSGrid2.default);
+var ResizableVirtualCssGrid = exports.ResizableVirtualCssGrid = (0, _resizable2.default)(_virtualCSSGridAuto2.default);
 //export default VirtualCSSGrid
 
 
@@ -321,7 +336,7 @@ var ResizableVirtualCssGrid = exports.ResizableVirtualCssGrid = (0, _resizable2.
 exports.default = _virtualCSSGridAuto2.default;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -339,7 +354,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _unitsCss = __webpack_require__(6);
+var _unitsCss = __webpack_require__(1);
 
 var _unitsCss2 = _interopRequireDefault(_unitsCss);
 
@@ -633,18 +648,6 @@ var _initialiseProps = function _initialiseProps() {
 exports.default = VirtualCSSGrid;
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* eslint-env browser, node */
-
-
-
-module.exports = __webpack_require__(7);
-
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -868,7 +871,7 @@ module.exports = angle;
 
 
 // Imports
-var utilities = __webpack_require__(1);
+var utilities = __webpack_require__(2);
 var viewport = __webpack_require__(11);
 
 var length = {'_default': 'px'};
@@ -1133,7 +1136,7 @@ module.exports = viewport;
 
 
 // Imports
-var utilities = __webpack_require__(1);
+var utilities = __webpack_require__(2);
 
 var resolution = {'_default': 'dpi'};
 
@@ -1198,7 +1201,393 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _elementResizeDetector = __webpack_require__(15);
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _unitsCss = __webpack_require__(1);
+
+var _unitsCss2 = _interopRequireDefault(_unitsCss);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var VirtualCSSGrid = function (_React$Component) {
+  _inherits(VirtualCSSGrid, _React$Component);
+
+  function VirtualCSSGrid(props) {
+    _classCallCheck(this, VirtualCSSGrid);
+
+    // the renderGridItem function is required
+    var _this = _possibleConstructorReturn(this, (VirtualCSSGrid.__proto__ || Object.getPrototypeOf(VirtualCSSGrid)).call(this, props));
+
+    _initialiseProps.call(_this);
+
+    if (!props.renderGridItem) throw new Error("A CSSGrid item renderer is required (renderGridItem prop)");
+    // the renderGridItem function is required
+    if (!props.nItems) throw new Error("The total ammount of items to render is required (nItems prop)");
+
+    // other defaults and props overrides
+
+    var _props$nItems = props.nItems,
+        nItems = _props$nItems === undefined ? 0 : _props$nItems,
+        _props$nColumns = props.nColumns,
+        nColumns = _props$nColumns === undefined ? 1 : _props$nColumns,
+        _props$columnWidth = props.columnWidth,
+        columnWidth = _props$columnWidth === undefined ? "1fr" : _props$columnWidth,
+        _props$rowHeight = props.rowHeight,
+        rowHeight = _props$rowHeight === undefined ? 100 : _props$rowHeight,
+        renderGridItem = props.renderGridItem,
+        gridStyleFromProps = props.gridStyle,
+        styleFromProps = props.style,
+        divProps = _objectWithoutProperties(props, ['nItems', 'nColumns', 'columnWidth', 'rowHeight', 'renderGridItem', 'gridStyle', 'style']);
+
+    // the cointainer style
+
+
+    var style = _extends({
+      overflow: 'auto',
+      // totally arbitrary first height value
+      height: '100px'
+    }, styleFromProps);
+
+    //  the gridStyle
+    //  notice the gridTemplateColumns can be defined using nColumns + columnWidth
+    //  but will be overrided by gridTemplateColumns if defined
+    var gridStyle = _extends({
+      display: "grid",
+      overflow: "hidden",
+      gridTemplateColumns: 'repeat(' + nColumns + ', ' + columnWidth + ')'
+    }, gridStyleFromProps);
+
+    // resolving the gap values
+
+    var _this$resolveGap = _this.resolveGap(gridStyle.gridGap),
+        rowsGap = _this$resolveGap.rowsGap,
+        columnsGap = _this$resolveGap.columnsGap;
+
+    _this.state = {
+      style: style,
+      gridStyle: gridStyle,
+      nItems: nItems,
+      nColumns: nColumns,
+      columnWidth: columnWidth,
+      rowHeight: rowHeight,
+      content: [],
+      rowPosition: 0,
+      renderGridItem: renderGridItem,
+      divProps: divProps,
+      rowsGap: rowsGap,
+      columnsGap: columnsGap,
+      addedArea: 0
+    };
+
+    return _this;
+  }
+
+  // resolving the gap value
+
+
+  _createClass(VirtualCSSGrid, [{
+    key: 'resolveGap',
+    value: function resolveGap(gapCSSString) {
+      // default gaps (0 pixels)
+      var defaultGaps = {
+        rowsGap: 0,
+        columnsGap: 0
+      };
+
+      if (!gapCSSString) return defaultGaps;
+      // converting abitrary gap values to pixels
+      return _extends({}, defaultGaps, gapCSSString.split(/\s+/).reduce(function (obj, item, index) {
+        // getting current gap (first row, then column, then ignore any extra)
+        var gap = _unitsCss2.default.convert("px", item);
+        //  setting both row and column gap to the first value found
+        if (index == 0) return { rowsGap: gap, columnsGap: gap
+          //  setting the column gap to the second value found
+        };if (index == 1) return _extends({}, obj, { columnsGap: gap
+          //  any other value is ignored
+        });return obj;
+      }, {}));
+    }
+
+    //  fills the remaining grid space (after the first row)
+    //  nRows is the number of rows to fill the remaining space (total - 1)
+    //  virtualContent is the list of the rendered gridItems so far
+    //  position is the next gridItem position
+    //  nColumns is the calculated number os columns per row
+    //  averageRowHeight is the calculated height of the first row
+
+
+    //  calculates the offsetTop of the first gridItem then
+    //  verifies how many subsequent gridItems have the same value
+    //  thefore, they are on the same row and we have our nColumns
+
+
+    //  receives the scrollTop and offsetHeight
+    //  and provides the numbers we need to render
+    //  just the necessary items
+    //  scrollTop is typically the scroll event target scrollTop value
+    //  containerHeight is typically the scroll event target offsetHeight value (the actual box height of it)
+
+
+    // handles the React onScroll container event
+
+  }, {
+    key: 'componentDidMount',
+
+
+    // renders the first time as soon as we can calculate the dimensions
+    value: function componentDidMount() {
+      this.calculateContentPosition(0, this.container.scrollHeight, this.container.offsetHeight);
+    }
+
+    // the actual react component render method
+
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      return _react2.default.createElement(
+        'div',
+        _extends({}, this.state.divProps, {
+          ref: function ref(element) {
+            return _this2.container = element;
+          },
+          style: this.state.style,
+          onScroll: this.handleScroll }),
+        _react2.default.createElement(
+          'div',
+          {
+            ref: function ref(grid) {
+              return _this2.grid = grid;
+            },
+            style: this.state.gridStyle },
+          this.state.content
+        )
+      );
+    }
+  }]);
+
+  return VirtualCSSGrid;
+}(_react2.default.Component);
+
+var _initialiseProps = function _initialiseProps() {
+  var _this3 = this;
+
+  this.renderNext = function () {
+    var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var virtualContent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+    var averageRowHeight = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+
+    //  we will keep adding items until we have the first row filled
+    //  the calculated CSS will allow us to predict the rest of the visible grid
+
+    //  adding the next gridItem
+    virtualContent.push(_this3.state.renderGridItem({
+      position: position,
+      columnPosition: position - _this3.state.firstItemToShow,
+      rowPosition: 0,
+      scrollRatio: _this3.state.scrollRatio
+    }));
+    //console.log(position % this.state.nColumns, this.state.nColumns)
+    //  commiting the changes to render
+    _this3.setState({
+      //  content so far
+      content: virtualContent,
+      //  nColumns so far
+      nColumns: _this3.grid.children.length
+    }, function () {
+      //  uppon rendering the last inserted item,
+      //  calculate if we filled the first row properly
+      _this3.forceUpdate(function () {
+
+        //  how many items currently on the grid
+        var gridNChildren = _this3.grid.children.length;
+        var lastChild = _this3.grid.children[gridNChildren - 1];
+
+        //  adding to the total width of all children so far
+        //  averaging the how height to predict how many we may have
+        averageRowHeight = gridNChildren > 1 ? (averageRowHeight + lastChild.offsetHeight) / 2 : lastChild.offsetHeight;
+        //  check if padding is also necessary
+        var firstRowOffSetTop = _this3.state.gridStyle.marginTop || 0;
+        //  until we fill the fisrt row, keep adding gridItems
+        //  PS: looks like this is not as consistent as expected...
+        if (lastChild.offsetTop === firstRowOffSetTop) {
+          _this3.renderNext(position + 1, virtualContent, averageRowHeight);
+        } else {
+          //  Ensuring the nColumns (giving a little extra time to render)
+          var nColumns = gridNChildren - 1;
+          //  estimated number of rows to fill a column (minus the first)
+          var nRowsToShow = Math.ceil(_this3.container.offsetHeight / (averageRowHeight + _this3.state.rowsGap));
+          //  calling the actual method that populates the rest of the grid
+          //  nColumns will be decreased by 1, since we needed one extra item to get the row break
+          _this3.renderRemainingSpace(position + 1, virtualContent, nColumns, nRowsToShow, averageRowHeight);
+        }
+      });
+    });
+  };
+
+  this.renderRemainingSpace = function (position, virtualContent, nColumns, nRowsToShow, averageRowHeight) {
+
+    //  how many items we will render
+    var nRemainingItems = nColumns * nRowsToShow;
+    var current = 1;
+    var scrollRatio = _this3.state.scrollRatio;
+
+    //  how many prerendered rows we got before this method
+
+    var nPrerenderedRows = Math.floor(virtualContent.length / nColumns);
+
+    //  calculating the grid style required numbers
+    var nRows = Math.ceil(_this3.state.nItems / nColumns);
+    var gridHeight = nRows * averageRowHeight + _this3.state.rowsGap * (nRows - 1);
+    var rowPosition = Math.floor(position / nColumns) - nPrerenderedRows;
+    var marginTop = rowPosition * averageRowHeight + _this3.state.rowsGap * rowPosition;
+
+    while (current <= nRemainingItems && position < _this3.state.nItems) {
+      var columnPosition = current % nColumns;
+      var _rowPosition = Math.floor(current / nColumns) + 1;
+      virtualContent.push(_this3.state.renderGridItem({
+        position: position,
+        columnPosition: columnPosition,
+        rowPosition: _rowPosition,
+        scrollRatio: scrollRatio
+      }));
+      position++;
+      current++;
+    }
+
+    // The Grid Style
+    var gridStyle = _extends({}, _this3.state.gridStyle, {
+      height: gridHeight - marginTop + 'px',
+      gridTemplateRows: 'repeat(' + (nRowsToShow + 1) + ', ' + averageRowHeight + 'px)',
+      marginTop: marginTop
+    });
+
+    _this3.setState({
+      content: virtualContent,
+      gridStyle: gridStyle,
+      nColumns: nColumns,
+      averageRowHeight: averageRowHeight
+    });
+  };
+
+  this.nColumnsFromRenderedItems = function () {
+    var firstOffsetTop = _this3.grid.children[0].offsetTop;
+    var nColumns = 0;
+    Array.from(_this3.grid.children).some(function (child) {
+      if (child.offsetTop === firstOffsetTop) {
+        nColumns++;
+        return false;
+      }
+      return true;
+    });
+    return nColumns;
+  };
+
+  this.calculateContentPosition = function (scrollTop, containerScrollHeight, containerHeight) {
+
+    //  defining our current scrollRatio
+    var scrollRatio = scrollTop / (containerScrollHeight - containerHeight);
+    //  the position of the gridItem to render considering an one dimension list/array
+    var position = Math.floor(_this3.state.nItems * scrollTop / containerScrollHeight) || 0;
+    //  considering the number of columns, gets the position of the first item to show relative to the scroll
+    var firstItemToShow = position - position % _this3.state.nColumns;
+
+    //  initial nColumns state
+    var nColumns = _this3.state.nColumns;
+
+    //  the new content
+
+    var content = [];
+
+    //  at this point there are twp possible jobs to perform:
+    //  render the first row to calculate the nColumns and averageRowHeight
+    //  or check if any changed state does not require to calculate that again
+    //  and proceed to fill the grid using the last calculated values
+    //  first check if we have previosly calculated nColumns and averageRowHeight
+    if (_this3.state.averageRowHeight) {
+      //  since we already know the nColumns and averageRowHeight
+      //  just fill the available space as quickly as possible
+      var nRowsToShow = 1 + Math.ceil((containerHeight - _this3.state.averageRowHeight) / (_this3.state.averageRowHeight + _this3.state.rowsGap));
+      _this3.renderRemainingSpace(firstItemToShow, [], nColumns, nRowsToShow, _this3.state.averageRowHeight);
+      return;
+      //  if the grid averaging
+      //  check how many items we have on the first column
+      //  let firstOffsetTop  = this.grid.children[0].style.offsetTop
+      //  nColumns            = Array.from(this.grid.children)
+      //                         .some(child => child.style.offsetTop !== firstOffsetTop)
+      //                         .length()
+    }
+
+    // sets the state (and that calls the render function again)
+    _this3.setState({
+      content: content,
+      scrollTop: scrollTop,
+      position: position,
+      firstItemToShow: firstItemToShow,
+      nColumns: nColumns
+    });
+
+    //  go render the first item of the first row
+    _this3.renderNext(firstItemToShow);
+
+    //  Since reading the offsetTop property wans't as consistent as we need
+    //  (an item on the second row might have offsetTop != firstRowOffSetTop)
+    //  we might need to recalculate just to be sure the nColumns captured
+    //  matches the value rendered after the css is finally parsed
+    //  here im giving 1 milissend just after everything is ready just to be sure
+    setTimeout(function () {
+      var nColumnsCheck = _this3.nColumnsFromRenderedItems();
+      if (nColumnsCheck != _this3.state.nColumns) {
+        _this3.setState({
+          nColumns: nColumnsCheck
+        }, function () {
+          _this3.calculateContentPosition(scrollTop, containerScrollHeight, containerHeight);
+        });
+      }
+    }, 1);
+  };
+
+  this.handleScroll = function (e) {
+    if (e.target != _this3.container) return;
+    var _e$target = e.target,
+        scrollTop = _e$target.scrollTop,
+        scrollHeight = _e$target.scrollHeight,
+        offsetHeight = _e$target.offsetHeight;
+
+    _this3.calculateContentPosition(scrollTop, scrollHeight, offsetHeight);
+  };
+};
+
+exports.default = VirtualCSSGrid;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _elementResizeDetector = __webpack_require__(16);
 
 var _elementResizeDetector2 = _interopRequireDefault(_elementResizeDetector);
 
@@ -1244,7 +1633,18 @@ exports.default = function (Component) {
         element.scrollTop = scrollTop;
 
         //  calculating the new content position (and rendering)
-        _this.virtualCSSGrid.calculateContentPosition(scrollTop, containerScrollHeight, containerHeight);
+        //  checking if the nColumns must change (support for CSSGrid properties)
+        var nColumns = _this.virtualCSSGrid.nColumnsFromRenderedItems();
+        if (_this.virtualCSSGrid.state.nColumns != nColumns) {
+          _this.virtualCSSGrid.setState({
+            nColumns: nColumns
+          }, function () {
+            _this.virtualCSSGrid.calculateContentPosition(scrollTop, containerScrollHeight, containerHeight);
+          });
+        } else {
+          //  if nColumns remain, just update based on the container size change
+          _this.virtualCSSGrid.calculateContentPosition(scrollTop, containerScrollHeight, containerHeight);
+        }
       };
 
       _this.resizeDetector = (0, _elementResizeDetector2.default)({ strategy: "scroll" });
@@ -1283,25 +1683,25 @@ exports.default = function (Component) {
 };
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var forEach                 = __webpack_require__(2).forEach;
-var elementUtilsMaker       = __webpack_require__(16);
-var listenerHandlerMaker    = __webpack_require__(17);
-var idGeneratorMaker        = __webpack_require__(18);
-var idHandlerMaker          = __webpack_require__(19);
-var reporterMaker           = __webpack_require__(20);
-var browserDetector         = __webpack_require__(3);
-var batchProcessorMaker     = __webpack_require__(21);
-var stateHandler            = __webpack_require__(23);
+var forEach                 = __webpack_require__(3).forEach;
+var elementUtilsMaker       = __webpack_require__(17);
+var listenerHandlerMaker    = __webpack_require__(18);
+var idGeneratorMaker        = __webpack_require__(19);
+var idHandlerMaker          = __webpack_require__(20);
+var reporterMaker           = __webpack_require__(21);
+var browserDetector         = __webpack_require__(4);
+var batchProcessorMaker     = __webpack_require__(22);
+var stateHandler            = __webpack_require__(24);
 
 //Detection strategies.
-var objectStrategyMaker     = __webpack_require__(24);
-var scrollStrategyMaker     = __webpack_require__(25);
+var objectStrategyMaker     = __webpack_require__(25);
+var scrollStrategyMaker     = __webpack_require__(26);
 
 function isCollection(obj) {
     return Array.isArray(obj) || obj.length !== undefined;
@@ -1611,7 +2011,7 @@ function getOption(options, name, defaultValue) {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1670,7 +2070,7 @@ module.exports = function(options) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1737,7 +2137,7 @@ module.exports = function(idHandler) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1762,7 +2162,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1816,7 +2216,7 @@ module.exports = function(options) {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1865,13 +2265,13 @@ module.exports = function(quiet) {
 };
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(22);
+var utils = __webpack_require__(23);
 
 module.exports = function batchProcessorMaker(options) {
     options             = options || {};
@@ -2010,7 +2410,7 @@ function Batch() {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2032,7 +2432,7 @@ function getOption(options, name, defaultValue) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2061,7 +2461,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2072,7 +2472,7 @@ module.exports = {
 
 
 
-var browserDetector = __webpack_require__(3);
+var browserDetector = __webpack_require__(4);
 
 module.exports = function(options) {
     options             = options || {};
@@ -2282,7 +2682,7 @@ module.exports = function(options) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2293,7 +2693,7 @@ module.exports = function(options) {
 
 
 
-var forEach = __webpack_require__(2).forEach;
+var forEach = __webpack_require__(3).forEach;
 
 module.exports = function(options) {
     options             = options || {};
@@ -2934,340 +3334,6 @@ module.exports = function(options) {
     };
 };
 
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _unitsCss = __webpack_require__(6);
-
-var _unitsCss2 = _interopRequireDefault(_unitsCss);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var VirtualCSSGrid = function (_React$Component) {
-  _inherits(VirtualCSSGrid, _React$Component);
-
-  function VirtualCSSGrid(props) {
-    _classCallCheck(this, VirtualCSSGrid);
-
-    // the renderGridItem function is required
-    var _this = _possibleConstructorReturn(this, (VirtualCSSGrid.__proto__ || Object.getPrototypeOf(VirtualCSSGrid)).call(this, props));
-
-    _initialiseProps.call(_this);
-
-    if (!props.renderGridItem) throw new Error("A CSSGrid item renderer is required (renderGridItem prop)");
-    // the renderGridItem function is required
-    if (!props.nItems) throw new Error("The total ammount of items to render is required (nItems prop)");
-
-    // other defaults and props overrides
-
-    var _props$nItems = props.nItems,
-        nItems = _props$nItems === undefined ? 0 : _props$nItems,
-        _props$nColumns = props.nColumns,
-        nColumns = _props$nColumns === undefined ? 1 : _props$nColumns,
-        _props$columnWidth = props.columnWidth,
-        columnWidth = _props$columnWidth === undefined ? "1fr" : _props$columnWidth,
-        _props$rowHeight = props.rowHeight,
-        rowHeight = _props$rowHeight === undefined ? 100 : _props$rowHeight,
-        renderGridItem = props.renderGridItem,
-        gridStyleFromProps = props.gridStyle,
-        styleFromProps = props.style,
-        divProps = _objectWithoutProperties(props, ['nItems', 'nColumns', 'columnWidth', 'rowHeight', 'renderGridItem', 'gridStyle', 'style']);
-
-    // the cointainer style
-
-
-    var style = _extends({
-      overflow: 'auto',
-      // totally arbitrary first height value
-      height: '100px'
-    }, styleFromProps);
-
-    //  the gridStyle
-    //  notice the gridTemplateColumns can be defined using nColumns + columnWidth
-    //  but will be overrided by gridTemplateColumns if defined
-    var gridStyle = _extends({
-      display: "grid",
-      overflow: "hidden",
-      gridTemplateColumns: 'repeat(' + nColumns + ', ' + columnWidth + ')'
-    }, gridStyleFromProps);
-
-    // resolving the gap values
-
-    var _this$resolveGap = _this.resolveGap(gridStyle.gridGap),
-        rowsGap = _this$resolveGap.rowsGap,
-        columnsGap = _this$resolveGap.columnsGap;
-
-    _this.state = {
-      style: style,
-      gridStyle: gridStyle,
-      nItems: nItems,
-      nColumns: nColumns,
-      columnWidth: columnWidth,
-      rowHeight: rowHeight,
-      content: [],
-      rowPosition: 0,
-      renderGridItem: renderGridItem,
-      divProps: divProps,
-      rowsGap: rowsGap,
-      columnsGap: columnsGap,
-      addedArea: 0
-    };
-
-    return _this;
-  }
-
-  // resolving the gap value
-
-
-  _createClass(VirtualCSSGrid, [{
-    key: 'resolveGap',
-    value: function resolveGap(gapCSSString) {
-      // default gaps (0 pixels)
-      var defaultGaps = {
-        rowsGap: 0,
-        columnsGap: 0
-      };
-
-      if (!gapCSSString) return defaultGaps;
-      // converting abitrary gap values to pixels
-      return _extends({}, defaultGaps, gapCSSString.split(/\s+/).reduce(function (obj, item, index) {
-        // getting current gap (first row, then column, then ignore any extra)
-        var gap = _unitsCss2.default.convert("px", item);
-        //  setting both row and column gap to the first value found
-        if (index == 0) return { rowsGap: gap, columnsGap: gap
-          //  setting the column gap to the second value found
-        };if (index == 1) return _extends({}, obj, { columnsGap: gap
-          //  any other value is ignored
-        });return obj;
-      }, {}));
-    }
-
-    //  fills the remaining grid space (after the first row)
-    //  nRows is the number of rows to fill the remaining space (total - 1)
-    //  virtualContent is the list of the rendered gridItems so far
-    //  position is the next gridItem position
-    //  nColumns is the calculated number os columns per row
-    //  averageRowHeight is the calculated height of the first row
-
-
-    //  receives the scrollTop and offsetHeight
-    //  and provides the numbers we need to render
-    //  just the necessary items
-    //  scrollTop is typically the scroll event target scrollTop value
-    //  containerHeight is typically the scroll event target offsetHeight value (the actual box height of it)
-
-
-    // handles the React onScroll container event
-
-  }, {
-    key: 'componentDidMount',
-
-
-    // renders the first time as soon as we can calculate the dimensions
-    value: function componentDidMount() {
-      this.calculateContentPosition(0, this.container.scrollHeight, this.container.offsetHeight);
-    }
-
-    // the actual react component render method
-
-  }, {
-    key: 'render',
-    value: function render() {
-      var _this2 = this;
-
-      return _react2.default.createElement(
-        'div',
-        _extends({}, this.state.divProps, {
-          ref: function ref(element) {
-            return _this2.container = element;
-          },
-          style: this.state.style,
-          onScroll: this.handleScroll }),
-        _react2.default.createElement(
-          'div',
-          {
-            ref: function ref(grid) {
-              return _this2.grid = grid;
-            },
-            style: this.state.gridStyle },
-          this.state.content
-        )
-      );
-    }
-  }]);
-
-  return VirtualCSSGrid;
-}(_react2.default.Component);
-
-var _initialiseProps = function _initialiseProps() {
-  var _this3 = this;
-
-  this.renderNext = function () {
-    var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    var virtualContent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-    var addedWidth = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var averageRowHeight = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-
-    //  we will keep adding items until we have the first row filled
-    //  the calculated CSS will allow us to predict the rest of the visible grid
-
-    //  adding the next gridItem
-    virtualContent.push(_this3.state.renderGridItem({
-      position: position,
-      columnPosition: position - _this3.state.firstItemToShow,
-      rowPosition: 0,
-      scrollRatio: _this3.state.scrollRatio
-    }));
-    //console.log(position % this.state.nColumns, this.state.nColumns)
-    //  commiting the changes to render
-    _this3.setState({
-      //  content so far
-      content: virtualContent,
-      //  nColumns so far
-      nColumns: position - _this3.state.firstItemToShow
-    }, function () {
-      //  uppon rendering the last inserted item,
-      //  calculate if we filled the first row properly
-      _this3.forceUpdate(function () {
-
-        //  how many items currently on the grid
-        var gridNChildren = _this3.grid.children.length;
-
-        //  once we added at least one, get the width of the last item added
-        if (gridNChildren > 0) {
-          var lastChild = _this3.grid.children[gridNChildren - 1];
-          //  adding to the total width of all children so far
-          addedWidth += lastChild.offsetWidth + _this3.state.columnsGap;
-          //  averaging the how height to predict how many we may have
-          averageRowHeight = gridNChildren > 1 ? (averageRowHeight + lastChild.offsetHeight) / 2 : lastChild.offsetHeight;
-        }
-        //  until we filled a rows visible space, add anote gridItem
-        if (addedWidth < _this3.container.offsetWidth) {
-          _this3.renderNext(position + 1, virtualContent, addedWidth, averageRowHeight);
-        } else {
-          //  once the first row is filled, calculate how many items
-          //  will take to fill the grid and populate before the next render
-          //  number of columns to fill the first row
-          var nColumns = gridNChildren - 1;
-          //  estimated number of rows to fill a column (minus the first)
-          var nRows = Math.floor(_this3.container.offsetHeight / (averageRowHeight + _this3.state.rowsGap)) - 1;
-
-          //  calling the actual method that populates the rest of the grid
-          //  nColumns will be decreased by 1, since we needed one extra item to get the row break
-          _this3.renderRemainingSpace(position + 1, virtualContent, nColumns, nRows, averageRowHeight);
-        }
-      });
-    });
-  };
-
-  this.renderRemainingSpace = function (position, virtualContent, nColumns, nRowsToShow, averageRowHeight) {
-    //  how many items we will render
-    var nItems = nColumns * nRowsToShow;
-    var current = 1;
-    var scrollRatio = _this3.state.scrollRatio;
-
-    //  calculating the grid style required numbers
-
-    var nRows = Math.ceil(_this3.state.nItems / nColumns);
-    var gridHeight = nRows * averageRowHeight + _this3.state.rowsGap * (nRows - 1);
-    var rowPosition = Math.floor(position / nColumns) - 1;
-    var marginTop = rowPosition * averageRowHeight + _this3.state.rowsGap * rowPosition;
-
-    while (current < nItems) {
-      var columnPosition = current % nColumns;
-      var _rowPosition = Math.floor(current / nColumns) + 1;
-      virtualContent.push(_this3.state.renderGridItem({
-        position: position,
-        columnPosition: columnPosition,
-        rowPosition: _rowPosition,
-        scrollRatio: scrollRatio
-      }));
-      position++;
-      current++;
-    }
-
-    // The Grid Style
-    var gridStyle = _extends({}, _this3.state.gridStyle, {
-      height: gridHeight - marginTop + 'px',
-      gridTemplateRows: 'repeat(' + (nRowsToShow + 1) + ', ' + averageRowHeight + 'px)',
-      marginTop: marginTop
-    });
-
-    _this3.setState({
-      content: virtualContent,
-      gridStyle: gridStyle
-    });
-  };
-
-  this.calculateContentPosition = function (scrollTop, containerScrollHeight, containerHeight) {
-
-    //  ;)
-    var content = [];
-    // The Grid Style
-    var gridStyle = _extends({}, _this3.state.gridStyle, {
-      display: "grid",
-      overflow: "hidden"
-
-      //  defining our current scrollRatio
-    });var scrollRatio = scrollTop / (containerScrollHeight - containerHeight);
-    //  the position of the gridItem to render considering an one dimension list/array
-    var position = Math.floor(_this3.state.nItems * scrollTop / containerScrollHeight) || 0;
-    //  considering the number of columns, gets the position of the first item to show relative to the scroll
-    var firstItemToShow = position - position % _this3.state.nColumns;
-    console.log(firstItemToShow, _this3.state.nColumns);
-    //  reseting nColumns to be recalculated
-    var nColumns = 1;
-    // sets the state (and that calls the render function again)
-    _this3.setState({
-      content: content,
-      gridStyle: gridStyle,
-      scrollTop: scrollTop,
-      position: position,
-      firstItemToShow: firstItemToShow,
-      nColumns: nColumns
-    });
-
-    _this3.renderNext(firstItemToShow);
-  };
-
-  this.handleScroll = function (e) {
-    if (e.target != _this3.container) return;
-    var _e$target = e.target,
-        scrollTop = _e$target.scrollTop,
-        scrollHeight = _e$target.scrollHeight,
-        offsetHeight = _e$target.offsetHeight;
-
-    _this3.calculateContentPosition(scrollTop, scrollHeight, offsetHeight);
-  };
-};
-
-exports.default = VirtualCSSGrid;
 
 /***/ })
 /******/ ]);

@@ -39,7 +39,19 @@ export default (Component) => {
       element.scrollTop         = scrollTop
 
       //  calculating the new content position (and rendering)
-      this.virtualCSSGrid.calculateContentPosition(scrollTop, containerScrollHeight, containerHeight)
+      //  checking if the nColumns must change (support for CSSGrid properties)
+      let nColumns = this.virtualCSSGrid.nColumnsFromRenderedItems()
+      if(this.virtualCSSGrid.state.nColumns != nColumns){
+        this.virtualCSSGrid.setState({
+          nColumns
+        }, () => {
+            this.virtualCSSGrid.calculateContentPosition(scrollTop, containerScrollHeight, containerHeight)
+        })
+      }else{
+        //  if nColumns remain, just update based on the container size change
+        this.virtualCSSGrid.calculateContentPosition(scrollTop, containerScrollHeight, containerHeight)
+      }
+
     }
 
     render(){

@@ -10,6 +10,6 @@ import VirtualCSSGridAuto from './virtualCSSGridAuto.js'
 import resizable from './resizable.js'
 
 //   the actual exports
-export const ResizableVirtualCssGrid = resizable(VirtualCSSGrid)
+export const ResizableVirtualCssGrid = resizable(VirtualCSSGridAuto)
 //export default VirtualCSSGrid
 export default VirtualCSSGridAuto
