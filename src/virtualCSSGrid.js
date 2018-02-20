@@ -16,7 +16,7 @@ class VirtualCSSGrid extends React.Component {
       //  how many items to render
       nItems = 0,
       //  how many columns
-      nColumns = 5,
+      nColumns = 1,
       // each column line width (any unit)
       columnWidth = "1fr",  // not used if gridTemplateColumns is defined
       // each row line height in pixels
@@ -35,8 +35,6 @@ class VirtualCSSGrid extends React.Component {
     // the cointainer style
     let style = {
       overflow: 'auto',
-      // totally arbitrary first height value
-      height:'100px',
       ...styleFromProps,
     }
 
@@ -68,7 +66,8 @@ class VirtualCSSGrid extends React.Component {
       renderGridItem,
       divProps,
       rowsGap,
-      columnsGap
+      columnsGap,
+      addedArea:0
     }
 
   }
@@ -104,6 +103,127 @@ class VirtualCSSGrid extends React.Component {
       }
   }
 
+  renderNext = (position = 0, virtualContent = [], averageRowHeight = 0) => {
+
+    //  we will keep adding items until we have the first row filled
+    //  the calculated CSS will allow us to predict the rest of the visible grid
+
+    //  adding the next gridItem
+    virtualContent.push(this.state.renderGridItem({
+      position,
+      columnPosition:position - this.state.firstItemToShow,
+      rowPosition:0,
+      scrollRatio:this.state.scrollRatio
+    }))
+    //console.log(position % this.state.nColumns, this.state.nColumns)
+    //  commiting the changes to render
+    this.setState({
+      //  content so far
+      content:virtualContent,
+      //  nColumns so far
+      nColumns:this.grid.children.length
+    }, () => {
+      //  uppon rendering the last inserted item,
+      //  calculate if we filled the first row properly
+      this.forceUpdate( () => {
+
+        //  how many items currently on the grid
+        let gridNChildren = this.grid.children.length
+        let lastChild     = this.grid.children[gridNChildren-1]
+
+        //  adding to the total width of all children so far
+        //  averaging the how height to predict how many we may have
+        averageRowHeight  = gridNChildren > 1 ? (averageRowHeight + lastChild.offsetHeight) / 2 : lastChild.offsetHeight
+        //  check if padding is also necessary
+        let firstRowOffSetTop = this.state.gridStyle.marginTop || 0
+        //  until we fill the fisrt row, keep adding gridItems
+        //  PS: looks like this is not as consistent as expected...
+        if(lastChild.offsetTop === firstRowOffSetTop ){
+          this.renderNext(position+1, virtualContent, averageRowHeight)
+        }else {
+          //  Ensuring the nColumns (giving a little extra time to render)
+          let nColumns = gridNChildren-1 ? gridNChildren-1 : 1
+          //  estimated number of rows to fill a column (minus the first)
+          let nRowsToShow = Math.ceil(this.container.offsetHeight / (averageRowHeight+this.state.rowsGap))
+          //  calling the actual method that populates the rest of the grid
+          //  nColumns will be decreased by 1, since we needed one extra item to get the row break
+          this.renderRemainingSpace(position+1, virtualContent, nColumns, nRowsToShow, averageRowHeight)
+        }
+      })
+    })
+  }
+
+  //  fills the remaining grid space (after the first row)
+  //  nRows is the number of rows to fill the remaining space (total - 1)
+  //  virtualContent is the list of the rendered gridItems so far
+  //  position is the next gridItem position
+  //  nColumns is the calculated number os columns per row
+  //  averageRowHeight is the calculated height of the first row
+  renderRemainingSpace = (position, virtualContent, nColumns, nRowsToShow, averageRowHeight) =>
+  {
+
+    //  how many items we will render
+    let nRemainingItems   = nColumns * nRowsToShow
+    let current           = 1
+    let { scrollRatio }   = this.state
+
+    //  how many prerendered rows we got before this method
+    let nPrerenderedRows  = Math.floor(virtualContent.length / nColumns)
+
+    //  calculating the grid style required numbers
+    let nRows             = Math.ceil(this.state.nItems / nColumns)
+    let gridHeight        = nRows * averageRowHeight + this.state.rowsGap * (nRows-1)
+    let rowPosition       = Math.floor(position / nColumns)-nPrerenderedRows
+    let marginTop         = rowPosition * averageRowHeight + this.state.rowsGap * rowPosition
+
+    while(current <= nRemainingItems && position < this.state.nItems){
+      let columnPosition  = current % nColumns
+      let rowPosition     = Math.floor(current / nColumns)+1
+      virtualContent.push(this.state.renderGridItem({
+        position,
+        columnPosition,
+        rowPosition,
+        scrollRatio
+      }))
+      position++
+      current++
+    }
+
+    // The Grid Style
+    let gridStyle = {
+        ...this.state.gridStyle,
+        height:`${gridHeight-marginTop}px`,
+        gridTemplateRows:`repeat(${nRowsToShow+1}, ${averageRowHeight}px)`,
+        marginTop
+    }
+
+    this.setState({
+      content:virtualContent,
+      gridStyle,
+      nColumns,
+      averageRowHeight
+    })
+
+  }
+
+
+  //  calculates the offsetTop of the first gridItem then
+  //  verifies how many subsequent gridItems have the same value
+  //  thefore, they are on the same row and we have our nColumns
+  nColumnsFromRenderedItems = () =>{
+    let firstOffsetTop  = this.grid.children[0].offsetTop
+    let nColumns = 0
+    Array.from(this.grid.children).some(child => {
+                  if(child.offsetTop === firstOffsetTop){
+                    nColumns++
+                    return false
+                  }
+                  return true
+                })
+    return nColumns
+  }
+
+
   //  receives the scrollTop and offsetHeight
   //  and provides the numbers we need to render
   //  just the necessary items
@@ -111,122 +231,61 @@ class VirtualCSSGrid extends React.Component {
   //  containerHeight is typically the scroll event target offsetHeight value (the actual box height of it)
   calculateContentPosition = (scrollTop, containerScrollHeight, containerHeight) => {
 
-    //  POSSIBLE ENHANCEMENT HERE: only trigger a new render
-    //  if last render can be broken by the new values
-
-    //  the real nColumns depends of the grid`s css and dimension
-    let nColumns = 0
-    //  support for the "auto-fill" cssGrid feature considering
-    //  the DOM Engine is filling as much content as it can in one row
-    if(/repeat\(\s*auto\-fill/.test(this.grid.style.gridTemplateColumns)){
-      //  maximum grid width that can be filled per row
-      let maximunWidth = this.grid.offsetWidth
-      //  checking how many gridItems are filling a row
-      //  and using this as basis for our nColumns
-      Array.from(this.grid.children).some(item => {
-        //  if the next gridItem need more space then available, nColumns is defined
-        if( (maximunWidth -= item.offsetWidth) < 0 ) return true
-        //  otherwise we can add more columns
-        nColumns++
-        return false
-      })
-    }else{
-      //  if the content isn't filling the ammount of columns, we might use
-      //  this super fast "hack"s to calculate it before the next render
-      //  we start by getting columns specified outside css functions
-      //  ie: "[linename1] 100px [linename2] repeat(auto-fit, [linename3 linename4] 300px) 100px"
-      //  100px and 100px are 2 columns specified outside css functions
-      let columnsOutsideFunctions =  this.grid.style.gridTemplateColumns
-                                      .replace(/\S*\(.*?\)|\[.*?\]/g, "")
-                                      .trim()
-                                      .split(/\s+/)
-      //  if no auto-fitting is specified, use the columnsOutsideFunctions length
-      nColumns = columnsOutsideFunctions.length
-      //  otherwise, calculate how many auto fitted gridItems there will be
-      if(this.grid.style.gridTemplateColumns.indexOf("auto-fit") !== -1){
-        //  if the ammout of columns is generated using the gridItems size
-        //  check how many are necessary to fill one row and use that
-        //  as base to calculate the rest of the grid
-        //  when auto-fits are present, we can't currently (2018-02-10) use it
-        //  with relative units, like fr or %. It must be absolute like px.
-        //  so let's calculate how much space the columns outside functions use
-        //  to stabilish how much auto-fit room we got remaining
-        //  little neat trick starting the reduce at "rowsGap * -1" allows us to
-        //  add the rowGap for every new auto fitted item, even if its the first column
-        let columnsOutsideFunctionsWidth = columnsOutsideFunctions.reduce( (width, column) => {
-                                                                      return width + units.convert("px", column, this.grid, "offsetWidth") + this.state.columnsGap
-                                                                    }, this.state.columnsGap*-1)
-        //  grabbing the auto-fit necessary width per repeat item
-        //  ie: repeat(auto-fit, 100px) = 100px necessary per new item (plus grid gap)
-        let autoFitSize = this.state.columnsGap+units.convert("px", this.grid.style.gridTemplateColumns.match(/\(.*auto-fit.*?(\d+\w+).*\)/)[1], this.grid, "offsetWidth")
-        //  finally stabilishing how many auto-fit gridItems we are rendering per column
-        let nAutoFittedColumns = Math.floor((this.grid.offsetWidth - columnsOutsideFunctionsWidth) / autoFitSize)
-        //  nColumns can be finally calculated sums autofitted and regular gridItems
-        nColumns = nAutoFittedColumns + nColumns
-      }
-    }
-
-    // if by any means we still got 0 nColumns, use the initial state value
-    nColumns || (nColumns = this.state.nColumns)
-
-    //  how many rows are we talking about?
-    let nRows             = Math.ceil(this.state.nItems / nColumns)
-    //  calculated height of the grid
-    let gridHeight        = nRows * this.state.rowHeight + this.state.rowsGap * (nRows-1)
-    //  we might roll just enough to see an extra row
-    let nRowsToShow       = Math.ceil(containerHeight / this.state.rowHeight)+1
-    //  here we calculate how many items we will render
-    let nItensToRender    = nRowsToShow*nColumns
-    //  the abolute position considering an one dimension list/array
-    let nItemsPosition    = Math.floor(this.state.nItems * scrollTop / gridHeight) || 0
-    //  we must ajust the position to always fill from the first grid cell
-    //  even if the scroll position "points" to an item in the middle of a line
-    let firstItemToShow   = nItemsPosition - (nItemsPosition % nColumns)
-    //  getting the rowPosition now that we stabished the absolutePosition
-    let rowPosition       = Math.floor(firstItemToShow / nColumns)
     //  defining our current scrollRatio
     let scrollRatio       =  scrollTop / ( containerScrollHeight - containerHeight )
+    //  the position of the gridItem to render considering an one dimension list/array
+    let position          = Math.floor(this.state.nItems * scrollTop / containerScrollHeight) || 0
+    //  considering the number of columns, gets the position of the first item to show relative to the scroll
+    let firstItemToShow   = position - (position % this.state.nColumns)
 
-    //  ;)
-    let content = [...Array(nItensToRender).keys()]
-                  .map(i => i+firstItemToShow)
-                  .filter(i => i < this.state.nItems)
-                  .map((position, counter) => {
-                    let columnPosition  = position % nColumns
-                    let rowPosition     = Math.floor(counter / nColumns)
-                    let gridItem        = this.state.renderGridItem({position, columnPosition, rowPosition, scrollRatio})
-                    let styledGridItem  = {
-                      ...gridItem,
-                      style:{
-                        ...gridItem.style,
-                        gridRowStart:rowPosition+1,
-                        gridColumnStart:columnPosition+1,
-                      }
-                    }
-                    return styledGridItem
-                  })
+    //  initial nColumns state
+    let { nColumns }      = this.state
 
-    // The Grid Style
-    let marginTop           = (rowPosition * this.state.rowHeight + this.state.rowsGap * (rowPosition))
-    let gridStyle = {
-        ...this.state.gridStyle,
-        display:"grid",
-        height:`${gridHeight-marginTop}px`,
-        gridTemplateRows:`repeat(${nRowsToShow}, ${this.state.rowHeight}px)`,
-        overflow:"hidden",
-        marginTop
+    //  the new content
+    let content           = []
+
+    //  at this point there are two possible jobs to perform:
+    //  render the first row to calculate the nColumns and averageRowHeight
+    //  or check if any changed state does not require to calculate that again
+    //  and proceed to fill the grid using the last calculated values
+    //  first check if we have previosly calculated nColumns and averageRowHeight
+    if(this.state.averageRowHeight){
+        //  since we already know the nColumns and averageRowHeight
+        //  just fill the available space as quickly as possible
+        let nRowsToShow = 1+Math.ceil((containerHeight-this.state.averageRowHeight) / (this.state.averageRowHeight+this.state.rowsGap))
+        this.renderRemainingSpace(firstItemToShow, [], nColumns, nRowsToShow, this.state.averageRowHeight)
+        return
     }
 
     // sets the state (and that calls the render function again)
     this.setState({
       content,
       scrollTop,
-      nRowsToShow,
-      rowPosition,
-      gridStyle,
-      nColumns,
-      scrollRatio
+      position,
+      firstItemToShow,
+      nColumns
     })
+
+    //  go render the first item of the first row
+    this.renderNext(firstItemToShow)
+
+
+    //  Since reading the offsetTop property wans't as consistent as we need
+    //  (an item on the second row might have offsetTop != firstRowOffSetTop)
+    //  we might need to recalculate just to be sure the nColumns captured
+    //  matches the value rendered after the css is finally parsed
+    //  here im giving 1 milissend just after everything is ready just to be sure
+    setTimeout(() =>{
+      let nColumnsCheck = this.nColumnsFromRenderedItems()
+      if(nColumnsCheck != this.state.nColumns){
+        this.setState({
+          nColumns:nColumnsCheck
+        }, () => {
+          this.calculateContentPosition(scrollTop, containerScrollHeight, containerHeight)
+        })
+      }
+    },1)
+
   }
 
   // handles the React onScroll container event

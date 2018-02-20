@@ -1,6 +1,5 @@
 //  this modules default export will be the VirtualCSSGrid component
 import VirtualCSSGrid from './virtualCSSGrid.js'
-import VirtualCSSGridAuto from './virtualCSSGridAuto.js'
 
 //  resizable is available as a decorator or higher order component
 //  it's not clear if the best practice is to give just the decorator
@@ -10,6 +9,5 @@ import VirtualCSSGridAuto from './virtualCSSGridAuto.js'
 import resizable from './resizable.js'
 
 //   the actual exports
-export const ResizableVirtualCssGrid = resizable(VirtualCSSGridAuto)
-//export default VirtualCSSGrid
-export default VirtualCSSGridAuto
+export const ResizableVirtualCSSGrid = resizable(VirtualCSSGrid)
+export default VirtualCSSGrid
