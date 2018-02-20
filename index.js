@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -72,18 +72,6 @@ module.exports = require("react");
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* eslint-env browser, node */
-
-
-
-module.exports = __webpack_require__(7);
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -225,7 +213,7 @@ module.exports = utilities;
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -251,7 +239,7 @@ utils.forEach = function(collection, callback) {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -297,7 +285,7 @@ detector.isLegacyOpera = function() {
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -308,11 +296,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ResizableVirtualCSSGrid = undefined;
 
-var _virtualCSSGrid = __webpack_require__(6);
+var _virtualCSSGrid = __webpack_require__(5);
 
 var _virtualCSSGrid2 = _interopRequireDefault(_virtualCSSGrid);
 
-var _resizable = __webpack_require__(15);
+var _resizable = __webpack_require__(14);
 
 var _resizable2 = _interopRequireDefault(_resizable);
 
@@ -330,7 +318,7 @@ var ResizableVirtualCSSGrid = exports.ResizableVirtualCSSGrid = (0, _resizable2.
 exports.default = _virtualCSSGrid2.default;
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -348,7 +336,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _unitsCss = __webpack_require__(1);
+var _unitsCss = __webpack_require__(6);
 
 var _unitsCss2 = _interopRequireDefault(_unitsCss);
 
@@ -708,6 +696,18 @@ var _initialiseProps = function _initialiseProps() {
 exports.default = VirtualCSSGrid;
 
 /***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* eslint-env browser, node */
+
+
+
+module.exports = __webpack_require__(7);
+
+
+/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -931,7 +931,7 @@ module.exports = angle;
 
 
 // Imports
-var utilities = __webpack_require__(2);
+var utilities = __webpack_require__(1);
 var viewport = __webpack_require__(11);
 
 var length = {'_default': 'px'};
@@ -1196,7 +1196,7 @@ module.exports = viewport;
 
 
 // Imports
-var utilities = __webpack_require__(2);
+var utilities = __webpack_require__(1);
 
 var resolution = {'_default': 'dpi'};
 
@@ -1247,8 +1247,7 @@ if (true) {
 
 
 /***/ }),
-/* 14 */,
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1262,7 +1261,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _elementResizeDetector = __webpack_require__(16);
+var _elementResizeDetector = __webpack_require__(15);
 
 var _elementResizeDetector2 = _interopRequireDefault(_elementResizeDetector);
 
@@ -1358,25 +1357,25 @@ exports.default = function (Component) {
 };
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var forEach                 = __webpack_require__(3).forEach;
-var elementUtilsMaker       = __webpack_require__(17);
-var listenerHandlerMaker    = __webpack_require__(18);
-var idGeneratorMaker        = __webpack_require__(19);
-var idHandlerMaker          = __webpack_require__(20);
-var reporterMaker           = __webpack_require__(21);
-var browserDetector         = __webpack_require__(4);
-var batchProcessorMaker     = __webpack_require__(22);
-var stateHandler            = __webpack_require__(24);
+var forEach                 = __webpack_require__(2).forEach;
+var elementUtilsMaker       = __webpack_require__(16);
+var listenerHandlerMaker    = __webpack_require__(17);
+var idGeneratorMaker        = __webpack_require__(18);
+var idHandlerMaker          = __webpack_require__(19);
+var reporterMaker           = __webpack_require__(20);
+var browserDetector         = __webpack_require__(3);
+var batchProcessorMaker     = __webpack_require__(21);
+var stateHandler            = __webpack_require__(23);
 
 //Detection strategies.
-var objectStrategyMaker     = __webpack_require__(25);
-var scrollStrategyMaker     = __webpack_require__(26);
+var objectStrategyMaker     = __webpack_require__(24);
+var scrollStrategyMaker     = __webpack_require__(25);
 
 function isCollection(obj) {
     return Array.isArray(obj) || obj.length !== undefined;
@@ -1686,7 +1685,7 @@ function getOption(options, name, defaultValue) {
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1745,7 +1744,7 @@ module.exports = function(options) {
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1812,7 +1811,7 @@ module.exports = function(idHandler) {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1837,7 +1836,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1891,7 +1890,7 @@ module.exports = function(options) {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1940,13 +1939,13 @@ module.exports = function(quiet) {
 };
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(23);
+var utils = __webpack_require__(22);
 
 module.exports = function batchProcessorMaker(options) {
     options             = options || {};
@@ -2085,7 +2084,7 @@ function Batch() {
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2107,7 +2106,7 @@ function getOption(options, name, defaultValue) {
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2136,7 +2135,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2147,7 +2146,7 @@ module.exports = {
 
 
 
-var browserDetector = __webpack_require__(4);
+var browserDetector = __webpack_require__(3);
 
 module.exports = function(options) {
     options             = options || {};
@@ -2357,7 +2356,7 @@ module.exports = function(options) {
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2368,7 +2367,7 @@ module.exports = function(options) {
 
 
 
-var forEach = __webpack_require__(3).forEach;
+var forEach = __webpack_require__(2).forEach;
 
 module.exports = function(options) {
     options             = options || {};

@@ -1,4 +1,5 @@
 
+
 # react-virtual-css-grid
 
 **Extremely fast and lightweight virtual CSSGrid(also used as list) for React**
@@ -115,16 +116,20 @@ export default App;
 
 You can try to use this as your "App" component for your create-react-app starter kit to check the results and tweak parameters.
 
+## CSSGrid properties support
+Currently this project is focused on vertical virtual grids. The grid-template-columns property allows us to create amazing layouts and grids, auto generating rows according to how many items we can show at any given time. Try out using settings like `grid-template-columns:repeat(auto-fill, 150px);` as part of your grid style and behold fluid columns that beautifully fill the rows.
 
 ## Resize support
 
 CSSGrid is more fun when you can take advantage of the flexibility it provides when it comes to changing the grid dimensions. Making it thinner might decrease the number of columns or making it wider might create room for more of them. If you want to use CSSGrid properties that change dynamically the number of rows and columns, The ResizableVirtualCSSGrid is for you.
 ```javascript
 import React from 'react';
-import { ResizableVirtualCssGrid } from 'react-virtual-css-grid'
+import { ResizableVirtualCSSGrid } from 'react-virtual-css-grid'
 
 class App extends React.Component {
 
+    //  considering we will be adding lots of rows,
+    //  lets set some default height for the container style
     getCointainerStyle(){
       return {
         height:"100vh",
@@ -132,11 +137,12 @@ class App extends React.Component {
       }
     }
 
-    renderGridItem({position, columnPosition, rowPosition}){
+    // 	sample grid item renderer
+    renderGridItem({position}){
       let style = {
         alignSelf:"center",
         background:`#d0d0d0`,
-        height:"100%",
+        height:"90px",
         alignContent:"center",
         display:"grid"
       }
@@ -150,14 +156,15 @@ class App extends React.Component {
     getGridStyle() {
       return {
         gridGap:"10px 5px",
-        gridTemplateColumns:"10% repeat(auto-fit, 150px) 10%"
+        gridTemplateColumns:"10% repeat(auto-fill, minmax(100px, 1fr)) 20%",
+        padding:"10px"
       }
     }
 
   render() {
     return (
       <div>
-        <ResizableVirtualCssGrid
+        <ResizableVirtualCSSGrid
           renderGridItem={this.renderGridItem}
           nItems={1000}
           style={this.getCointainerStyle()}
@@ -169,7 +176,6 @@ class App extends React.Component {
 }
 
 export default App;
-
 ```
 
 It trades off some performance to keep track of the resize and trigger render gridItems when it happens, but it is necessary as we are showing only the necessary number of items to fill the current visible grid area (which might give back to you A LOT more performance).
